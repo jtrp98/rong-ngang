@@ -1,0 +1,22 @@
+## Modules
+
+Single TypeScript package ทั้งหมดสร้างที่ `C:\src\AICode\rong-ngang\code\` (codeRoots ของ run มาจาก target ที่เลือกใน sta-config.json — DES-015; ตัว package ติดตั้งแบบ private อยู่ `code\agent-team`) — **Node ≥ 20 + TypeScript รันด้วย `tsx` (ไม่มี build step)**, dependency เดียวคือ `yaml` (npm) แยกโมดูลภายใน: `src/core` (pipeline driver, tier resolution, gate enforcement, routing), `src/camps` (adapters ต่อ CLI ทั้งสาม), `src/web` (http server + static ui), entry ที่รันด้วย tsx · tests ใช้ `node:test` ตรวจ 2026-10-04: Node **v24.21.0**, npm 11.19.0 มีอยู่บนเครื่อง — ไม่มี bundler/transpile, รัน .ts ตรงด้วย tsx (ยังตอบ "ติดตั้งไม่ต้อง build หนัก")
+
+**คู่ port/adapter (dependency inversion):** `src/core` ประกาศ interface `CampAdapter` (contract ของการ spawn camp CLI — รับ packet/policy คืน outcome+handoff) โดยไม่อ้าง process หรือไฟล์จริงเอง; `src/camps` implement ต่อ camp และเป็นจุดเดียวที่แตะ `child_process.spawn`, ไฟล์ config yaml (`yaml`) และ run state ทิศ dependency: web → camps → core — core **ห้าม** import camps ทำให้ tier/gate/pipeline logic ใน core ทดสอบได้ด้วย fake adapter โดยไม่ spawn CLI จริง (แบ่งแบบ port/adapter ภายใน package เดียว — ไม่มี project แยก)
+
+| โฟลเดอร์/ไฟล์ | ความรับผิดชอบ | DES หลัก |
+|---|---|---|
+| `package.json` + `tsconfig.json` | package เดียว: dep เดียว `yaml`, devDep `tsx`; entry `src/main.ts` รันด้วย tsx, scripts `start`/`test` | — |
+| `src/core/` | pipeline driver + stage state machine + right-size + loop/fix-round นับ (DES-001), tier resolution + basis — port เกือบ 1:1 จาก tier engine เดิม (DES-004), เลือก camp ต่อ role/stage + validate config (DES-005), gate trigger evaluation + GateRecord (DES-008), packet builder + handoff-v1 schema (DES-012), intake งานใหม่ → BA packet (DES-010), role prompt loader แหล่งเดียว + frontmatter + hash (DES-003), yaml config store + run state store atomic write/resume (DES-007; config รวม `code\sta-config.json` machine-local — DES-015), write audit manifest snapshot + diff (DES-006), docsRoot/layout resolve + path safety (DES-011), index↔ไฟล์ validator (DES-014 — implement ใน task BE-001) · **ประกาศ interface `CampAdapter`** | DES-001, 003, 004, 005, 006, 007, 008, 010, 011, 012, 014 |
+| `src/camps/` | implement `CampAdapter` — camp adapters claude/codex/agy: spawn ผ่าน `child_process.spawn` (argv array ไม่ผ่าน shell), flags, output parse, timeout (DES-002) | DES-002 |
+| `src/web/` | Node http server (`node:http` bind loopback 127.0.0.1:7800) + SSE + serve static dashboard (DES-009); endpoint `POST /api/tasks/new` (DES-010); composition root — wire core ↔ camps | DES-009, 010 |
+| `src/main.ts` | entry — โหลด config, start server + driver | DES-001, 009 |
+| `test/*.test.ts` | node:test — tier engine, gate triggers, write-audit diff, path safety, packet/handoff contract | DES-004, 006, 008, 011, 012 |
+| `code\agent-team\config\` | registry.yaml, routing.yaml, tiers.yaml, camps.yaml, gates.yaml — คนเป็นเจ้าของ (ตำแหน่งตาม §Data Model คงเดิม) + `code\sta-config.json` (machine-local gitignored — DES-015, เขียนผ่าน setup prompt/task; key `gituse` ผ่าน `/gituse` — DES-017) | §Data Model, DES-015 |
+| `code\agent-team\ui\` | index.html (static, 2 กรณี + หน้าตอบ gate) — `src/web` serve จาก path นี้ | DES-009 |
+| `code\agent-team\state\` | ข้อมูล runtime (runs/, modules/) — agent deny | DES-006, DES-007 |
+| (ไม่เพิ่มโค้ด) solo mode | coding agent session 4 ตัว (claude, codex, antigravity, zcode — AC-024) อ่าน pack ชุดเดียวกัน (role prompts/templates/policies/ตาราง tier — path เดียวกับ DES-003 ที่ packRoot) แล้วขับ pipeline เอง; จุดเข้าต่อ agent (AGENTS.md ที่ `code\` ฯลฯ — DES-013) + คู่มือเปิด solo session เป็น task ของ PM ตอน build | DES-013 |
+
+**pack fork (2026-10-05 — ไม่เพิ่มโค้ด):** pack ทั้งชุด (`CLAUDE.md` + `.claude\agents\*.md` + `policies\` + `templates\`) fork จาก sta2 มาสร้างใหม่ที่ `code\` (packRoot — ย้ายเข้า `code\` 2026-10-05 เพราะ pack เป็น asset ของสินค้า) โดย **setup role ตาม task ใน plan (one-time)** — role prompts ทุกตัวถูกแก้ตามโครง split (path ใหม่, กติกาอ่าน index-first, status-at-index — DES-014); orchestrator อ่าน pack ชุดเดียวกันที่ packRoot (DES-003/013)
+
+การแบ่งภายในเป็น module ภายใต้ `src/core` (คงความละเอียดเดิมของแผนผัง module): `pipeline`, `tiers`, `routing`, `gates`, `contract`, `intake`, `prompts`, `permissions`, `stateStore`, `knowledge` · `src/camps` → `claude.ts`, `codex.ts`, `antigravity.ts`

@@ -1,0 +1,16 @@
+# registry.yaml — product settings ของ deployment นี้ (คนเป็นเจ้าของ — ระบบอ่านอย่างเดียว)
+# ตาม design\data-model.md · docsRoot/codeRoots ไม่อยู่ที่นี่ — มาจาก code\sta-config.json ตอนเลือก knowledge → target (DES-015)
+project: rong-ngang
+docsLayout: split # enum: split (default, DES-014) | flat | module — OQ-D1 supersede (2026-10-05) — ใช้กับ knowledge root ที่เลือก (DES-011)
+packRoot: C:\src\AICode\rong-ngang\code # string — ราก pack (asset ของสินค้า — ย้ายเข้า code\ 2026-10-05, DES-003)
+# derived — คำนวณในโค้ดจาก packRoot (ไม่เขียนในไฟล์นี้):
+#   rolePromptRoot = <packRoot>\.claude\agents (role prompt ทั้ง 12 — AC-006, DES-003)
+#   templatesRoot  = <packRoot>\templates (template เอกสาร STA ทุกฉบับ — AC-012)
+orchestratorHome: C:\src\AICode\rong-ngang\code\agent-team # string — ที่อยู่ state/logs/packets
+ui:
+  host: 127.0.0.1 # bind เฉพาะ loopback เท่านั้น (DES-009 Security)
+  port: 7800 # int 1024–65535
+  openBrowser: true # bool — เปิด browser อัตโนมัติเมื่อ start server
+concurrency:
+  maxConcurrentRuns: 1 # int — จำนวน run ที่ dispatch พร้อมกันทั้งระบบ (release นี้ = 1, DES-001)
+  maxConcurrentStages: 1 # int — stage ที่ dispatch พร้อมกันต่อ run (release นี้ = 1, DES-001)

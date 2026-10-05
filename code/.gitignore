@@ -1,0 +1,10 @@
+# machine-local registry (DES-015) — ต่อเครื่อง ไม่ commit
+sta-config.json
+
+node_modules/
+*.log
+Thumbs.db
+.DS_Store
+# state = runtime data (DES-006/007) — ไม่ commit; เก็บโฟลเดอร์ว่างไว้ด้วย .gitkeep
+agent-team/state/**
+!agent-team/state/.gitkeep

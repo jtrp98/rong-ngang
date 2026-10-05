@@ -1,0 +1,96 @@
+# routing.yaml — role → camp + write scope ต่อ role (คนเป็นเจ้าของ — ระบบอ่านอย่างเดียว)
+# writePaths ตั้งต้นตามตาราง DES-006 (ฐาน OQ-D2 ยืนยัน 2026-10-04, ปรับ split ตาม DES-014 โดยเจ้าของ 2026-10-05)
+#   - glob รูป `knowledge/<module>/...` = สัมพัทธ์ docsRoot · `codeRoots/**` = path ของ target ที่เลือก (DES-015)
+#   - glob รูป `<packRoot>/...` = สัมพัทธ์ราก pack (DES-003) — ใช้ได้เฉพาะ setup ตาม task ที่ plan กำหนด
+# universal deny ทุก role (DES-006, บังคับฝั่ง audit): .git/** · code/agent-team/** · config/ ทั้ง 5 ไฟล์ ·
+#   code\sta-config.json (อ่านอย่างเดียวยกเว้น setup ผ่าน setup prompt/task) · module อื่นที่ไม่ใช่ของ run นี้
+defaultCamp: claude # enum: claude|codex|antigravity — camp ที่ใช้เมื่อ role ไม่ระบุ (OQ-2: release นี้ทุก role ที่ claude)
+role_routes: # กุญแจคือ role name ตรงกับชื่อไฟล์ใน rolePromptRoot ทั้ง 12
+  business-analyst:
+    camp: claude
+    model: null # string|null — override model ต่อ role (precedence ดู DES-004)
+    effort: null # string|null — override effort ต่อ role (แยก field)
+    writePaths:
+      allow: ["knowledge/<module>/requirement/**", "knowledge/<module>/open-questions/**", "knowledge/<module>/index.md"]
+      deny: []
+  system-analyst:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["knowledge/<module>/design/**"]
+      deny: []
+  project-manager:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      # ยกเว้นคอลัมน์ Status ของ plan/index.md = qa-engineer — ตรวจได้จริงในโครง split (DES-006/DES-014)
+      allow: ["knowledge/<module>/plan/**"]
+      deny: []
+  test-planner:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["knowledge/<module>/test-plan/**"]
+      deny: []
+  uxui-designer:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["knowledge/<module>/uxui/**"]
+      deny: []
+  setup:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      # codeRoots/** (ครั้งเดียวต่อโปรเจกต์) + pack ที่ packRoot ตาม task ที่ plan กำหนดเท่านั้น (DES-006)
+      # เขียน code\sta-config.json ได้เฉพาะผ่าน setup prompt/task (DES-015) — ไม่อยู่ใน allow
+      allow: ["codeRoots/**", "<packRoot>/CLAUDE.md", "<packRoot>/.claude/agents/*", "<packRoot>/policies/**", "<packRoot>/templates/**"]
+      deny: []
+  backend-engineer:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["codeRoots/**"]
+      deny: []
+  frontend-engineer:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["codeRoots/**"]
+      deny: []
+  reviewer:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["knowledge/<module>/review/**"]
+      deny: []
+  qa-engineer:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      # plan/index.md = เฉพาะคอลัมน์ Status (DES-006 — บังคับด้วยบรีฟ + audit อ่าน diff ทั้งไฟล์)
+      allow: ["knowledge/<module>/qa/**", "knowledge/<module>/plan/index.md"]
+      deny: []
+  security:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["knowledge/<module>/security.md"] # ไฟล์เดียว — โตเกิน 30 KB ค่อยแตก security/** (DES-006)
+      deny: []
+  devops:
+    camp: claude
+    model: null
+    effort: null
+    writePaths:
+      allow: ["knowledge/<module>/deploy.md", "codeRoots/**"] # codeRoots = infra เท่านั้น
+      deny: []

@@ -1,0 +1,20 @@
+{
+  "name": "agent-team",
+  "version": "0.1.0",
+  "private": true,
+  "description": "STA orchestrator skeleton (SETUP-001) — no logic yet; BE-001 wires the pipeline (DES-001..014)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.6.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}

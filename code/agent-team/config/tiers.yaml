@@ -1,0 +1,42 @@
+# tiers.yaml — tier binding (แทน model-tiers.yaml เดิม) — คนเป็นเจ้าของ ระบบอ่านอย่างเดียว
+# ค่าตามตาราง binding ฉบับยืนยัน (OQ-4 2026-10-04, REQ-004) ตรงตาม design\data-model.md
+role_defaults: # role → tier เมื่อ task ไม่ cast — ยืนยันแล้ว (OQ-4)
+  business-analyst: T3
+  system-analyst: T2
+  project-manager: T2
+  test-planner: T3
+  reviewer: T3
+  qa-engineer: T3
+  security: T2
+  setup: T6
+  uxui-designer: T5
+  backend-engineer: T5
+  frontend-engineer: T5
+  devops: T5
+tiers:
+  T1: { reserved: true, camps: {} } # ห้าม cast อัตโนมัติ (REQ-004, AC-009); camp ว่าง = คนระบุ model/effort เอง
+  T2:
+    camps:
+      claude:       { model: opus,             effort: high } # ค่าตามตาราง requirement\req-004.md
+      codex:        { model: gpt-6.1-sol,      effort: xhigh }
+      antigravity:  { model: gemini-3.8-flash-high, effort: null } # effort null = ฝังในชื่อ model (native)
+  T3:
+    camps:
+      claude:       { model: opus,             effort: medium }
+      codex:        { model: gpt-6.1-sol,      effort: high }
+      antigravity:  { model: gemini-3.8-flash-medium, effort: null }
+  T4:
+    camps:
+      claude:       { model: sonnet,           effort: high }
+      codex:        { model: gpt-6.1-sol,      effort: high }
+      antigravity:  { model: gemini-3.7-flash-high, effort: null }
+  T5:
+    camps:
+      claude:       { model: sonnet,           effort: medium }
+      codex:        { model: gpt-6.1-sol,      effort: medium }
+      antigravity:  { model: gemini-3.7-flash-medium, effort: null }
+  T6:
+    camps:
+      claude:       { model: haiku,            effort: null } # haiku ไม่รับ effort — ต่างกันที่ชื่อ model
+      codex:        { model: gpt-6.1-sol,      effort: low }
+      antigravity:  { model: gemini-3.6-flash-low, effort: null }

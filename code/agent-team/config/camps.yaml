@@ -1,0 +1,34 @@
+# camps.yaml — spawn profile ต่อ camp (คนเป็นเจ้าของ — ระบบอ่านอย่างเดียว)
+# ชื่อ flag มาจาก --help จริงของ CLI แต่ละตัว (ตรวจ 2026-10-04) — DES-002 · ตรงตาม design\data-model.md
+defaults: { timeoutSec: 1800, retryOnCrash: 1 } # int — หมดเวลาต่อ stage; จำนวน retry เมื่อ CLI พังก่อนทำงาน
+camps:
+  claude:
+    command: claude # claude 2.1.287
+    headlessArgs: ["-p", "--output-format", "json", "--permission-prompts", "none", "--permission-mode", "dontAsk"]
+    modelFlag: "--model" # จาก claude --help
+    effortFlag: "--effort" # จาก claude --help
+    schemaFlag: "--json-schema" # บังคับผลลัพธ์สุดท้ายเป็น handoff JSON (claude --help: "only works with --print")
+    rolePromptFlag: "--append-system-prompt-file" # claude --help อ้าง "--append-system-prompt[-file]"
+    briefChannel: stdin # บรีฟยาว ส่งทาง stdin (กันขีดจำกัดความยาว command line ของ Windows)
+    toolRuleFlags: ["--allowedTools", "--disallowedTools"] # ชื่อ tool จาก frontmatter `tools:` ของ role
+    extraDirsFlag: "--add-dir" # ให้เข้าถึง docsRoot + codeRoots
+  codex:
+    command: codex # codex-cli 0.160.0
+    subcommand: exec
+    headlessArgs: ["--json", "--skip-git-repo-check", "--sandbox", "workspace-write", "--output-last-message", "<lastMessagePath>"]
+    modelFlag: "-m" # codex exec --help: "-m, --model <MODEL>"
+    effortVia: ["-c", "model_reasoning_effort=<effort>"] # ไม่มี flag effort ตรง — key จาก tier-and-effort-run.md:100 (mark inferred (doc))
+    schemaFlag: "--output-schema" # codex exec --help: "JSON Schema file describing the model's final response shape"
+    rolePromptFlag: null # ไม่มีช่อง system prompt → role prompt ไปอยู่ใน packet (DES-003)
+    briefChannel: packet-file # packet อยู่เป็นไฟล์, positional prompt ชี้ path สั้น ๆ
+    cwdFlag: "-C" # codex exec --help: "-C, --cd <DIR>"
+  antigravity:
+    command: agy # agy 1.2.16
+    headlessArgs: ["-p", "--output-format", "json", "--sandbox"]
+    modelFlag: "--model"
+    effortFlag: "--effort" # agy --help: "(low|medium|high|xhigh|max)"
+    schemaFlag: "--json-schema"
+    rolePromptFlag: null # agy --help ไม่มี append-system-prompt → packet (DES-003)
+    briefChannel: packet-file
+    extraDirsFlag: "--add-dir" # repeatable (agy --help)
+    logFlag: "--log-file" # เก็บ log ฝั่ง CLI ต่อ stage

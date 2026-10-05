@@ -1,0 +1,11 @@
+# gates.yaml — human gate 7 จุด + เจ้าของ (คนเป็นเจ้าของ — ระบบอ่านอย่างเดียว) ตรงตาม design\data-model.md
+owner_default: { name: "jabja" } # release นี้ทุก gate ชี้คนเดียว (REQ-006, AC-015) — jabja ยืนยัน 2026-10-04 (OQ-D5); แก้ได้ที่ config
+gates:
+  business-choice:   { staGate: 1, trigger: handoff,  owner: owner_default } # 1: material business choice
+  schema-breaking:   { staGate: 2, trigger: handoff,  owner: owner_default } # 2: schema/migration/breaking contract/Critical security consequence
+  ux-signoff:        { staGate: 3, trigger: structural, owner: owner_default } # 3: ก่อน frontend ที่พึ่ง UX artifact
+  qa-critical:       { staGate: 4, trigger: handoff,  owner: owner_default } # 4: Critical หรือ fail รอบที่ 3 ของ task เดิม
+  security-finding:  { staGate: 5, trigger: handoff,  owner: owner_default } # 5: Critical/Important จาก security
+  deploy-real:       { staGate: 6, trigger: structural, owner: owner_default } # 6: ก่อน devops execute deploy จริง
+  release-cut:       { staGate: 7, trigger: structural, owner: owner_default } # 7: ยืนยัน Release Scope ก่อนเริ่ม build
+channels: [] # string[] — ช่องทางแจ้งเพิ่ม (Telegram/LINE/Email) อยู่นอก release นี้; field สงวนไว้
