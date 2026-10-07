@@ -69,6 +69,49 @@ test("R2: audit violation → hold audit-violation ทุก suspect · ไม�
   assert.deepEqual(d.dispatch, []);
 });
 
+test("R2: audit violation จาก reviewer / qa / feature-qa → hold audit-violation ทุก suspect ไม่ให้ verdict ไหลผ่าน (QA-010)", () => {
+  const tasks = {
+    "BE-001": mkTask({ taskId: "BE-001", step: "awaiting-review" }),
+    "QA-001": mkTask({ taskId: "QA-001", owner: "qa-engineer", step: "qa", planPhase: "1" }),
+  };
+
+  // 1. reviewer PASS แต่มี audit violation → R2 hold BE-001 (ไม่ไหลผ่านไป R3 awaiting-qa)
+  const dReview = route(
+    mkEvent({
+      taskIds: ["BE-001"], sessionKind: "review", sessionRole: "reviewer",
+      handoff: mkHandoff({
+        role: "reviewer", outputState: "PASS",
+        review: { roundFile: "review/round-1.md", perTask: [{ task: "BE-001", verdict: "PASS" }], findings: [] },
+      }),
+      auditSuspects: ["BE-001"],
+    }),
+    tasks, CFG,
+  );
+  assert.equal(dReview.ruleId, "R2");
+  assert.equal(stepVal(dReview, "BE-001"), "held");
+  assert.equal(stepOf(dReview, "BE-001")!.hold!.reason, "audit-violation");
+  assert.deepEqual(dReview.dispatch, []);
+
+  // 2. feature-qa PASS แต่มี audit violation → R2 hold QA-001 (ไม่ไหลผ่านไป R19 phase cleared)
+  const dFQ = route(
+    mkEvent({
+      taskIds: ["QA-001"], sessionKind: "feature-qa", sessionRole: "qa-engineer",
+      handoff: mkHandoff({
+        role: "qa-engineer", outputState: "PASS",
+        featureQa: { phase: "1", roundFile: "qa/round-2.md", flows: [{ flow: "f", ref: "AC-001", result: "PASS" }], defects: [] },
+      }),
+      phases: { "1": mkPhase({ locked: false, featureQa: "running" }) },
+      auditSuspects: ["QA-001"],
+    }),
+    tasks, CFG,
+  );
+  assert.equal(dFQ.ruleId, "R2");
+  assert.equal(stepVal(dFQ, "QA-001"), "held");
+  assert.equal(stepOf(dFQ, "QA-001")!.hold!.reason, "audit-violation");
+  assert.deepEqual(dFQ.phaseCleared, []);
+  assert.deepEqual(dFQ.statusWrites, []);
+});
+
 // --- R3 / R4 (review — wave batching, AC-056 localized) ---
 test("R3+R4: review wave ต่อ task ตาม verdict ของตัวเอง — PASS → awaiting-qa · FAIL → fixRounds++ + fix session (AC-056/AC-070)", () => {
   const tasks = {

@@ -527,22 +527,27 @@ function handleHandoff(c: Ctx): void {
     }
   }
 
+  const suspects = c.event.auditSuspects ?? [];
+  if (suspects.length > 0) {
+    // R2 — audit violation: hold ทุก suspect ไม่นับรอบ (DES-018 แถว R2 · DES-021 §4 · QA-010)
+    c.W.ruleId = "R2";
+    const matched = [...new Set(suspects)].filter((id) => !!c.tasks[id]);
+    if (matched.length > 0) {
+      for (const id of matched) {
+        holdTask(c, "R2", id, "audit-violation", null, "write audit พบ violation — hold ไม่นับรอบ");
+      }
+    } else {
+      c.W.log.push(JSON.stringify({ ruleId: "R2", taskId: "", from: "", to: "held", reason: `write audit พบ violation — suspects [${suspects.join(", ")}] ไม่อยู่ใน tasks` }));
+    }
+    return;
+  }
+
   switch (kind) {
     case "execution": {
       if (state === "DONE") {
-        const suspects = c.event.auditSuspects ?? [];
-        if (suspects.length > 0) {
-          // R2 — audit violation: hold ทุก suspect ไม่นับรอบ (DES-021)
-          c.W.ruleId = "R2";
-          for (const id of [...new Set(suspects)]) {
-            if (!c.tasks[id]) continue;
-            holdTask(c, "R2", id, "audit-violation", null, "write audit พบ violation — hold ไม่นับรอบ");
-          }
-        } else {
-          // R1 — execution DONE + audit สะอาด → awaiting-review
-          c.W.ruleId = "R1";
-          for (const id of evTasks) go(c, "R1", id, "awaiting-review", "DONE + audit สะอาด — รอ review wave");
-        }
+        // R1 — execution DONE + audit สะอาด → awaiting-review
+        c.W.ruleId = "R1";
+        for (const id of evTasks) go(c, "R1", id, "awaiting-review", "DONE + audit สะอาด — รอ review wave");
       } else if (state === "BLOCKED") r14(c, h!, evTasks);
       else if (state === "NEEDS_DESIGN_CHANGE") {
         // R10 — hold design-change + dependents · คิว change: SA → PM → R13

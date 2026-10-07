@@ -29,6 +29,12 @@
 | 20 | BE-011 (fix round 1 — REV-045/046) | PASS (REV-045/046 resolved) | round-20.md |
 | 21 | BE-013, BE-014 | FAIL (ทั้งสอง task PASS — REV-055 Important เป็นช่องว่าง plan ของ wiring) | round-21.md |
 | 22 | BE-013, BE-014 (follow-up REV-055) | PASS (REV-055 resolved) | round-22.md |
+| 23 | BE-010 | PASS | round-23.md |
+| 24 | BE-015 | PASS | round-24.md |
+| 25 | BE-023 | PASS | round-25.md |
+| 26 | FE-001 | PASS | round-26.md |
+| 27 | FE-002 | PASS | round-27.md |
+| 28 | DEVOPS-001 | PASS | round-28.md |
 
 ## Findings
 
@@ -90,6 +96,8 @@
 | REV-054 | BE-011 | Minor | round-20.md |
 | REV-055 | — | Important | round-21.md |
 | REV-056 | BE-013 | Minor | round-21.md |
+| REV-057 | BE-015 | Minor | round-24.md |
+| REV-058 | FE-001 | Minor | round-26.md |
 
 ## Change Log
 
@@ -115,5 +123,12 @@
 - 2026-10-07 — round 20 (BE-011 fix round 1 — ตรวจเฉพาะ REV-045/046): **PASS** · REV-045 **resolved** (terminal entry จริง `main.ts:44-135` — args knowledge→target→module + --date บังคับ · config/path fail-closed ก่อนแตะ state · start/resume ผ่าน PipelineDriver · แจ้ง gate ทาง stdout · invokedDirectly คงเดิม · test ใหม่ 4) · REV-046 **resolved** (`reviewDispatches` รับ rowOrder — `scheduler.ts:166-177` + driver.ts:874 — เรียงผู้สมัครตามแถวตารางก่อน pack · test unit + integration ยืนยัน) · fix ไม่ทำของที่รอบ 19 ยืนยันเสีย (transitionRunStatus/applyParserIssueHolds/killOrphan คงเดิมทุกจุด) · ตัดสิน 2 จุดจาก engineer: SKELETON_MESSAGE คง export ถูกต้องชั่วคราว (skeleton.test.ts นอก Write paths — การเลิก placeholder → REV-053 ให้ PM ตัดสิน) · ลำดับ phase ของ waves lexicographic ไม่ขัด DES-019 ข้อ 3 แต่ต่างมาตรฐาน "Phase น้อยก่อน" ของ DES-001 → REV-054 Minor → backlog · เพิ่ม REV-053/054 Minor → backlog · evidence `npm test` 279/279 (273 + 6 ใหม่) + dry-proof entry ปฏิเสธครบไม่มี state เกิด · REV-047…052 คง → backlog (ดู round-20.md)
 - 2026-10-07 — round 21 (BE-013 + BE-014 — camp adapters phase 4): **PASS ทั้งสอง task** — argv จาก camps.yaml จริงครบ DES-002 (codex: `--output-schema` = path ตาม pin 2026-10-07 · agy: `--json-schema` = path + ไม่มี envelope และ cliSessionId=null mark สมมติฐานชัด) · effortVia `-c` / effort=null ไม่ปรากฏ · AC-033 · timeout/kill-tree/retryOnCrash บนฐานร่วม base.ts เดียวกับ claude · fail-closed ก่อน spawn · AC-004 · รอบ **FAIL** เฉพาะจุด — **REV-055 Important (task "—" — เจ้าของ PM): wiring ยังไม่มีเจ้าของ — `main.ts:90-93` register เฉพาะ claude + comment เก่า "R1 มี camp เดียว" เป็นเท็จแล้ว · `driver.ts:962-963` ปฏิเสธ camp ที่ไม่มี adapter → flow phase 4 (plan\index.md:32) FAIL แน่นอนถ้า QA ก่อน BE-015 · ทางแก้: amend be-015 (register ครบ 3 camp ที่ composition root) หรือ grant main.ts ให้ BE-013/014 — ไม่ใช่ finding ของ task จึงไม่ FAIL task** · **REV-056 Minor → backlog** (codexOutputMeta nested pick กว้าง — key ชนใน error payload ทำ SessionRecord ผิดได้) · evidence `npm test` 324/324 — reviewer นับ `test(` ใน test\ ตรง 324 (codex 17 · agy 18 · camp-claude 21) (ดู round-21.md)
 - 2026-10-07 — round 22 (BE-013 + BE-014 follow-up — ตรวจเฉพาะ REV-055): **PASS** · REV-055 **resolved** — PM amend ตัวเลือก ข (be-013.md:17 / be-014.md:17 Scope+Write paths +main.ts · plan\index.md:114 บันทึกการตัดสิน) → BE register codex/antigravity ที่ composition root ครบ 3 camp รูปเดียวกับ claude (`main.ts:13-15` import · `main.ts:92-100` comment+register — key ตรง KNOWN_CAMPS `config.ts:24` · camps.yaml ครบ 3 camp · constructor รับ (profile, opts) เท่ากันทุกตัว) · comment เท็จ "R1 มี camp เดียว" หายทั้ง src\ · comment ใหม่ตรงจริงรวม mark สมมติฐาน agy รอ QA-001 · `driver.ts:962-963` backstop คงเดิม · เฉพาะส่วน register+comment — นับ top-level `test(` ใน test\ = 324 ตรงทุกไฟล์เท่ารอบ 21 (ไม่แตะ test) · BE-013/BE-014 **คง PASS** · ไม่มี finding ใหม่ · evidence `npm test` 324/324 + พิสูจน์ register keys claude/codex/antigravity constructor จริง exit 0 + dry main ไม่พัง (ดู round-22.md)
+- 2026-10-07 — round 23 (BE-010): **PASS** · ตรวจสอบข้อความ untrusted, guard, decision, change chain, gate ครบถ้วนตาม AC-017/018/019 · evidence `npm test` 334/334 ผ่าน (ดู round-23.md)
+- 2026-10-07 — round 24 (BE-015 — Local API server + composition root): **PASS** · loopback 127.0.0.1, Host guard ป้องกัน DNS rebinding, static UI, endpoints ครบตาม DES-009, start OQ-5/AC-072, task untrusted text limit 20k (AC-017), gates latest/answer + terminal banner (AC-014), main --serve wiring · เพิ่ม REV-057 Minor → backlog (ดู round-24.md)
+- 2026-10-07 — round 25 (BE-023 — Task dashboard API + human retry): **PASS** · GET /tasks คืนครบ field DES-022, Status จาก plan เท่านั้น (AC-034), active/maxParallelSessions (AC-045), waitingFor, waitingOnHuman 3 แหล่ง · POST /retry ตรวจ Origin CSRF guard, by ว่าง 400, hold ห้ามปลด 409, ปลดสำเร็จไม่ reset ตัวนับ (DES-018), บันทึก humanActions, emit human-retry · GET /sessions/<sessionId> คืน contextFiles (AC-047), logTail 50 บรรทัด (ดู round-25.md)
+- 2026-10-07 — round 26 (FE-001 — Dashboard UI 2 กรณี + หน้าตอบ gate): **PASS** · vanilla HTML/CSS/JS ไม่มี CDN/external resources · ครบถ้วน 2 กรณี REQ-001 (เลือกงานเดิม + รับงานใหม่) + หน้าตอบ gate (AC-014, AC-016) · safeText escaping ป้องกัน XSS · redirect open gate (OQ-5) · เพิ่ม REV-058 Minor → backlog (ดู round-26.md)
+- 2026-10-07 — round 27 (FE-002 — Dashboard ต่อ task + หน้า session + ปุ่ม retry): **PASS** · ตารางงาน 1 แถวต่อ task แสดง Status จาก plan (AC-034), concurrency n / max (AC-045), step, attempt, hold, waitingFor (AC-037, AC-064) · แผง Waiting on Human ป้ายที่มา doc/gate/hold ชัดเจน (AC-014, AC-072) · แถบ migrate plan legacy (AC-074) · session modal แสดง contextFiles (AC-047), writeAudit, priorSession (AC-066), logTail escape ปลอดภัย · retry modal บังคับกรอก by (AC-016) ไม่ reset ตัวนับ (ดู round-27.md)
+- 2026-10-07 — round 28 (DEVOPS-001 — deploy.md runbook): **PASS** · ตรวจสอบเอกสาร `deploy.md` จัดทำตรงตาม template ครบทุกหัวข้อ: Prerequisites (Node v24.21.0, 3 CLIs: claude 2.1.292, codex 0.160.0, agy 1.2.16), ติดตั้ง, คำสั่ง smoke check 3 camp, เริ่มระบบ 2 ทางเลือก (terminal/web UI), crash recovery & resume reconcile, tuning configs, plan legacy & plan-error handling, solo mode, rollback, deploy history (R1 local release ครบ 34 tasks) (ดู round-28.md)
 
 Back-links: `..\index.md`
+

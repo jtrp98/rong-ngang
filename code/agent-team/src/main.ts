@@ -14,9 +14,11 @@ import { AntigravityAdapter } from "./camps/antigravity.ts";
 import { ClaudeAdapter } from "./camps/claude.ts";
 import { CodexAdapter } from "./camps/codex.ts";
 import { loadAppConfig, resolveRunRoots, type AppConfig } from "./core/config.ts";
-import type { CampAdapter } from "./core/contract/camp-adapter.ts";
 import { PipelineDriver } from "./core/driver.ts";
 import type { GateRecord } from "./core/state-store.ts";
+import { createWebServer, startWebServer, type WebServerInstance, type WebServerOptions } from "./web/server.ts";
+
+export { createWebServer, startWebServer, type WebServerInstance, type WebServerOptions };
 
 export interface MainOptions {
   argv?: readonly string[]; // default process.argv.slice(2)
@@ -26,8 +28,9 @@ export interface MainOptions {
 }
 
 export interface MainResult {
-  code: number; // 0 = run ถึงจุดเงียบโดยไม่ error (จบ/waiting-on-human) · 1 = ปฏิเสธ run
+  code: number; // 0 = run ถึงจุดเงียบโดยไม่ error (จบ/waiting-on-human/server รัน) · 1 = ปฏิเสธ run
   driver: PipelineDriver | null;
+  server?: WebServerInstance | null;
 }
 
 const USAGE = [
@@ -52,8 +55,22 @@ export async function main(opts: MainOptions = {}): Promise<MainResult> {
     return { code: 1, driver: null };
   };
 
-  // args — positional 3 ตัวตามลำดับเลือก + flags
+  // args — positional 3 ตัวตามลำดับเลือก + flags (หรือ --serve / serve เพื่อเริ่ม web server — BE-015)
   const argv = [...(opts.argv ?? process.argv.slice(2))];
+  if (argv.includes("--serve") || (argv.length === 1 && argv[0] === "serve")) {
+    let config: AppConfig;
+    try {
+      config = opts.config ?? loadAppConfig();
+    } catch (e) {
+      return fail(`ปฏิเสธ run — config ไม่ผ่าน: ${(e as Error).message}`);
+    }
+    const serverInst = await startWebServer({
+      config,
+      adapters: opts.adapters,
+      out: print,
+    });
+    return { code: 0, driver: null, server: serverInst };
+  }
   const positionals: string[] = [];
   let date: string | null = null;
   let resume = false;

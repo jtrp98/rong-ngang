@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>agent-team Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #a855f7;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      padding: 1.5rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-running { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .badge-waiting { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .badge-verified { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-idle { background: rgba(148, 163, 184, 0.2); color: #94a3b8; }
+    .badge-error { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .badge-purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+
+    .badge-source-doc { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .badge-source-gate { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-source-hold { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .grid { display: grid; gap: 1rem; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.35rem; color: var(--text-muted); }
+    select, input, textarea {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    button.btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 0.9rem;
+    }
+    button.btn:hover { background: var(--primary-hover); }
+    button.btn-warning { background: var(--warning); color: #000; }
+    button.btn-warning:hover { background: #d97706; }
+    button.btn-danger { background: var(--danger); color: white; }
+    button.btn-danger:hover { background: #dc2626; }
+    button.btn-secondary { background: #334155; color: white; }
+    button.btn-secondary:hover { background: #475569; }
+    button.btn-sm { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+
+    .module-card {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      background: #141e33;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 0.375rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    .alert-info { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd; }
+    .alert-warning { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
+    .alert-danger { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
+    .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+    .alert-legacy { background: rgba(245, 158, 11, 0.2); border: 1px solid var(--warning); color: #fbbf24; font-weight: 600; }
+
+    .char-count { font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: 0.25rem; }
+    pre {
+      background: #090d16;
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      font-family: monospace;
+      color: #cbd5e1;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    /* Tasks Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+    th, td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: #090d16;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal-dialog {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      max-width: 850px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .modal-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title { font-size: 1.15rem; font-weight: 600; }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-footer {
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      background: #141e33;
+      border: 1px solid var(--border);
+      margin-right: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>agent-team Web Dashboard</h1>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">Lean prompt-driven pipeline — Local loopback control</p>
+    </div>
+    <div id="live-indicator">
+      <span class="badge badge-idle" id="sse-status">Disconnected</span>
+    </div>
+  </header>
+
+  <!-- Global Notifications -->
+  <div id="global-notifications"></div>
+
+  <!-- Root Selector (DES-015) -->
+  <div class="card">
+    <div class="card-title">Knowledge & Target Roots</div>
+    <div class="grid grid-2">
+      <div>
+        <label for="knowledge-select">Knowledge Root:</label>
+        <select id="knowledge-select"></select>
+      </div>
+      <div>
+        <label for="target-select">Code Target:</label>
+        <select id="target-select"></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="btn-tab-modules" onclick="switchTab('tab-modules')">1. เลือกงานเดิม (Existing Modules)</button>
+    <button class="tab-btn" id="btn-tab-new-work" onclick="switchTab('tab-new-work')">2. เริ่มงานใหม่ (New Work Intake)</button>
+    <button class="tab-btn" id="btn-tab-gates" onclick="switchTab('tab-gates')">3. Human Gates & Approvals</button>
+  </div>
+
+  <!-- Tab 1: Existing Modules & Task Dashboard -->
+  <div id="tab-modules" class="tab-content">
+    <!-- Module List Section -->
+    <div class="card" id="modules-list-card">
+      <div class="card-title">
+        <span>Modules ใน Knowledge Root</span>
+        <button class="btn btn-sm" onclick="loadModules()">รีเฟรช</button>
+      </div>
+      <div id="modules-list">
+        <p style="color: var(--text-muted);">กำลังโหลดรายการ modules...</p>
+      </div>
+    </div>
+
+    <!-- Per-Task Dashboard View (FE-002 · DES-022) -->
+    <div class="card" id="module-tasks-card" style="display: none;">
+      <div class="card-title">
+        <div>
+          <span>Dashboard โมดูล: <strong id="current-module-title" style="color: #60a5fa;"></strong></span>
+          <span id="concurrency-badge" class="badge badge-purple" style="margin-left: 0.5rem;"></span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-secondary btn-sm" onclick="closeModuleTasks()">← กลับไปรายการ Modules</button>
+          <button class="btn btn-sm" onclick="refreshCurrentModuleTasks()">รีเฟรช Tasks</button>
+        </div>
+      </div>
+
+      <!-- Legacy Migration Banner (AC-074) -->
+      <div id="legacy-migration-banner" class="alert alert-legacy" style="display: none;">
+        ⚠️ รูปแบบ Plan: Legacy — ต้อง migrate / dispatch ทีละตัว (AC-074)
+      </div>
+
+      <!-- Phases & Feature QA Status (DES-022) -->
+      <div style="margin-bottom: 1rem;">
+        <label>สถานะ Feature QA ต่อ Phase:</label>
+        <div id="phases-chips-list" style="display: flex; flex-wrap: wrap;"></div>
+      </div>
+
+      <!-- Waiting on Human Panel (AC-014 · AC-072 · DES-022) -->
+      <div class="card" style="background: #141e33; border: 1px solid var(--border); margin-bottom: 1rem;">
+        <div class="card-title" style="font-size: 1rem; margin-bottom: 0.5rem;">
+          <span>แผง Waiting on Human</span>
+          <span class="badge badge-waiting" id="waiting-human-count">0 รายการ</span>
+        </div>
+        <div id="waiting-on-human-list">
+          <p style="color: var(--text-muted); font-size: 0.85rem;">ไม่มีงานที่ค้างรอการตัดสินใจของมนุษย์</p>
+        </div>
+      </div>
+
+      <!-- Tasks Table (DES-022 · AC-034 · AC-043 · AC-045 · AC-065) -->
+      <div>
+        <label>ตาราง Tasks ในโมดูล (Status ยึดจาก plan\index.md):</label>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Task ID & Name</th>
+                <th>Owner</th>
+                <th>Status (Doc)</th>
+                <th>Step</th>
+                <th>Attempt / Fix</th>
+                <th>Session ล่าสุด</th>
+                <th>Hold Info</th>
+                <th>Waiting For</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tasks-table-body">
+              <tr><td colspan="9" style="text-align: center; color: var(--text-muted);">กำลังโหลดรายการ tasks...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: New Work Intake (AC-017 / AC-018) -->
+  <div id="tab-new-work" class="tab-content" style="display: none;">
+    <div class="card">
+      <div class="card-title">รับงานใหม่เข้าสู่ Pipeline (ส่งตรงถึง Business Analyst)</div>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+        ข้อความดิบจะถูกส่งต่อไปยัง BA เพื่อวิเคราะห์และตัดสินใจ (create/amend) โดยไม่มีชั้นจัดหมวดแทรกแซง
+      </p>
+      <div style="margin-bottom: 1rem;">
+        <label for="new-work-module">ชื่อโมดูลเป้าหมาย (Optional / Default: new-module):</label>
+        <input type="text" id="new-work-module" placeholder="เช่น order-service, inventory">
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <label for="new-work-text">รายละเอียดงานใหม่ (จำกัดสูงสุด 20,000 ตัวอักษร):</label>
+        <textarea id="new-work-text" rows="6" placeholder="พิมพ์รายละเอียดความต้องการหรือข้อกำหนดงานใหม่ที่นี่..."></textarea>
+        <div class="char-count" id="new-work-count">0 / 20,000</div>
+      </div>
+      <button class="btn" id="submit-new-work-btn" onclick="submitNewWork()">ส่งงานใหม่ให้ BA</button>
+      <div id="new-work-result" style="margin-top: 1rem;"></div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Gates & Approvals (AC-014 / AC-016) -->
+  <div id="tab-gates" class="tab-content" style="display: none;">
+    <div class="card">
+      <div class="card-title">
+        <span>รายการ Gate รอการตัดสินใจของมนุษย์ (Waiting on Human)</span>
+        <button class="btn btn-sm" onclick="loadGates()">รีเฟรช</button>
+      </div>
+      <div id="gates-list">
+        <p style="color: var(--text-muted);">ไม่มี Gate ที่รอคำตอบในขณะนี้</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 1: Session Details Modal (DES-022 · AC-005 · AC-047 · AC-066) -->
+  <div id="session-modal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">รายละเอียด Session: <span id="session-modal-id" style="color: #60a5fa;"></span></div>
+        <button class="modal-close" onclick="closeSessionModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="session-modal-content">
+          <p style="color: var(--text-muted);">กำลังโหลดข้อมูล session...</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeSessionModal()">ปิด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Retry Task Modal (DES-022 · AC-016) -->
+  <div id="retry-modal" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 550px;">
+      <div class="modal-header">
+        <div class="modal-title">ปลด Hold / Retry Task: <span id="retry-modal-task" style="color: #fcd34d;"></span></div>
+        <button class="modal-close" onclick="closeRetryModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 1rem;">
+          <label>เหตุผลที่ติด Hold ปัจจุบัน:</label>
+          <div id="retry-modal-reason" class="alert alert-warning" style="margin-bottom: 0;"></div>
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label for="retry-by">ชื่อผู้ตัดสิน / ผู้สั่ง Retry (บังคับกรอก — บันทึกตามจริง AC-016):</label>
+          <input type="text" id="retry-by" placeholder="พิมพ์ชื่อของคุณ เช่น somchai">
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label for="retry-note">บันทึกเหตุผลเพิ่มเติม (Optional):</label>
+          <input type="text" id="retry-note" placeholder="เช่น ยอมรับผลทดสอบ / แก้ปัญหาชั่วคราวแล้ว">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeRetryModal()">ยกเลิก</button>
+        <button class="btn btn-warning btn-sm" id="btn-confirm-retry" onclick="confirmRetry()">ยืนยัน Retry</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 🔒 Security: Escape text content ป้องกัน XSS จาก untrusted agent/user/log input
+    function safeText(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    let configData = null;
+    let currentSse = null;
+    let activeModule = null; // โมดูลที่กำลังเปิดดู task dashboard อยู่
+    let retryContext = { module: null, taskId: null };
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+      document.getElementById(tabId).style.display = "block";
+      const btn = document.getElementById(`btn-${tabId}`);
+      if (btn) btn.classList.add("active");
+      if (tabId === "tab-gates") loadGates();
+      if (tabId === "tab-modules") {
+        if (!activeModule) loadModules();
+      }
+    }
+
+    // โหลด Config & Roots (DES-015)
+    async function init() {
+      try {
+        const res = await fetch("/api/config");
+        configData = await res.json();
+        const kSelect = document.getElementById("knowledge-select");
+        kSelect.innerHTML = "";
+        const kRoots = configData.sta?.knowledge_roots || [];
+        kRoots.forEach(k => {
+          const opt = document.createElement("option");
+          opt.value = k.name;
+          opt.textContent = `${k.name} (${k.path})`;
+          kSelect.appendChild(opt);
+        });
+
+        kSelect.addEventListener("change", updateTargets);
+        updateTargets();
+      } catch (e) {
+        showGlobalAlert("ไม่สามารถโหลด /api/config: " + e.message, "danger");
+      }
+    }
+
+    function updateTargets() {
+      const kSelect = document.getElementById("knowledge-select");
+      const tSelect = document.getElementById("target-select");
+      const kName = kSelect.value;
+      const kEntry = (configData.sta?.knowledge_roots || []).find(k => k.name === kName);
+      tSelect.innerHTML = "";
+      if (kEntry && kEntry.targets) {
+        kEntry.targets.forEach(t => {
+          const opt = document.createElement("option");
+          opt.value = t.name;
+          opt.textContent = `${t.name} (${t.path})`;
+          tSelect.appendChild(opt);
+        });
+      }
+      loadModules();
+    }
+
+    // โหลด Modules (Case 1)
+    async function loadModules() {
+      const container = document.getElementById("modules-list");
+      container.innerHTML = "<p style='color: var(--text-muted);'>กำลังโหลด...</p>";
+      try {
+        const res = await fetch("/api/modules");
+        const data = await res.json();
+        const modules = data.modules || [];
+        if (modules.length === 0) {
+          container.innerHTML = `
+            <div class="alert alert-warning">
+              ไม่พบโมดูลใน Knowledge Root ที่เลือก — กรุณารัน setup prompt เพื่อเริ่มต้นโครงการ (DES-015)
+            </div>
+          `;
+          return;
+        }
+
+        let html = "";
+        modules.forEach(m => {
+          const status = m.run ? m.run.status : "idle";
+          const statusBadge = status === "running" ? "badge-running" :
+                              status === "waiting-on-human" ? "badge-waiting" :
+                              status === "completed" ? "badge-verified" : "badge-idle";
+          const openGates = m.openGates || [];
+
+          html += `
+            <div class="module-card">
+              <div>
+                <div style="font-weight: 600; font-size: 1.05rem;">
+                  ${safeText(m.name)}
+                  <span class="badge ${statusBadge}" style="margin-left: 0.5rem;">${safeText(status)}</span>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                  Pointer: ${m.pointer ? safeText(m.pointer) : "ไม่มี run"} |
+                  Open Gates: <strong>${openGates.length}</strong>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="btn btn-secondary btn-sm" onclick="openModuleTasks('${safeText(m.name)}')">
+                  ดู Tasks &amp; Runtime
+                </button>
+                ${openGates.length > 0 ? `
+                  <button class="btn btn-warning btn-sm" onclick="openGateAnswer('${safeText(openGates[0].gateId)}')">
+                    ตอบ Gate (${safeText(openGates[0].gateId)})
+                  </button>
+                ` : ""}
+                <button class="btn btn-sm" onclick="startModule('${safeText(m.name)}')">
+                  ${status === "running" ? "กำลังรัน..." : "เริ่ม / Resume"}
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      } catch (e) {
+        container.innerHTML = `<div class="alert alert-danger">โหลด modules ล้มเหลว: ${safeText(e.message)}</div>`;
+      }
+    }
+
+    // เริ่มรันโมดูล
+    async function startModule(modName) {
+      const kName = document.getElementById("knowledge-select").value;
+      const tName = document.getElementById("target-select").value;
+      try {
+        const res = await fetch(`/api/modules/${encodeURIComponent(modName)}/start`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ knowledge: kName, target: tName })
+        });
+        const data = await res.json();
+        if (res.status === 409) {
+          // OQ-5: Run ติด open gate -> พาไปหน้าตอบ gate
+          showGlobalAlert(`โมดูล ${safeText(modName)} ติด open gate: ${safeText((data.gateIds || []).join(", "))}`, "warning");
+          if (data.gateIds && data.gateIds.length > 0) {
+            openGateAnswer(data.gateIds[0]);
+          }
+          loadModules();
+          return;
+        }
+        if (!res.ok) {
+          showGlobalAlert(`เริ่มโมดูล ${safeText(modName)} ล้มเหลว: ${safeText(data.error)}`, "danger");
+          return;
+        }
+
+        showGlobalAlert(`เริ่มโมดูล ${safeText(modName)} สำเร็จ (runId: ${safeText(data.runId)})`, "success");
+        connectSse(data.runId);
+        loadModules();
+      } catch (e) {
+        showGlobalAlert("Error: " + e.message, "danger");
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // FE-002: Module Task Dashboard + Human Retry View (DES-022)
+    // -------------------------------------------------------------------------
+    function openModuleTasks(modName) {
+      activeModule = modName;
+      document.getElementById("modules-list-card").style.display = "none";
+      document.getElementById("module-tasks-card").style.display = "block";
+      document.getElementById("current-module-title").textContent = modName;
+      loadModuleTasks(modName);
+    }
+
+    function closeModuleTasks() {
+      activeModule = null;
+      document.getElementById("module-tasks-card").style.display = "none";
+      document.getElementById("modules-list-card").style.display = "block";
+      loadModules();
+    }
+
+    function refreshCurrentModuleTasks() {
+      if (activeModule) loadModuleTasks(activeModule);
+    }
+
+    async function loadModuleTasks(modName) {
+      const tbody = document.getElementById("tasks-table-body");
+      try {
+        const res = await fetch(`/api/modules/${encodeURIComponent(modName)}/tasks`);
+        if (!res.ok) {
+          const err = await res.json();
+          tbody.innerHTML = `<tr><td colspan="9" style="color: var(--danger); text-align: center;">โหลด tasks ล้มเหลว: ${safeText(err.error)}</td></tr>`;
+          return;
+        }
+        const data = await res.json();
+
+        // 1. Concurrency badge: active / maxParallelSessions (AC-043, AC-045)
+        const concBadge = document.getElementById("concurrency-badge");
+        concBadge.textContent = `Active Sessions: ${data.active} / ${data.maxParallelSessions}`;
+
+        // 2. Legacy Migration Banner (AC-074)
+        const legBanner = document.getElementById("legacy-migration-banner");
+        if (data.needsMigration) {
+          legBanner.style.display = "block";
+        } else {
+          legBanner.style.display = "none";
+        }
+
+        // 3. Phases & Feature QA Chips
+        const phaseDiv = document.getElementById("phases-chips-list");
+        phaseDiv.innerHTML = "";
+        (data.phases || []).forEach(p => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          const fqaClass = p.featureQa === "pass" ? "style='color: #34d399; font-weight: 600;'" :
+                           p.featureQa === "fail" ? "style='color: #f87171; font-weight: 600;'" :
+                           p.featureQa === "running" ? "style='color: #60a5fa; font-weight: 600;'" : "style='color: #94a3b8;'";
+          chip.innerHTML = `Phase ${safeText(p.phase)}: <span ${fqaClass} style="margin-left: 0.25rem;">${safeText(p.featureQa)}</span> ${p.cleared ? "🔒 cleared" : ""}`;
+          phaseDiv.appendChild(chip);
+        });
+
+        // 4. Waiting on Human Panel (AC-014 · AC-072)
+        const wohList = document.getElementById("waiting-on-human-list");
+        const wohCount = document.getElementById("waiting-human-count");
+        const items = data.waitingOnHuman || [];
+        wohCount.textContent = `${items.length} รายการ`;
+
+        if (items.length === 0) {
+          wohList.innerHTML = "<p style='color: var(--text-muted); font-size: 0.85rem;'>ไม่มีงานที่ค้างรอการตัดสินใจของมนุษย์</p>";
+        } else {
+          let wohHtml = "";
+          items.forEach(w => {
+            const srcClass = w.source === "doc" ? "badge-source-doc" :
+                             w.source === "gate" ? "badge-source-gate" : "badge-source-hold";
+            const srcLabel = w.source === "gate" && w.gateId ? `gate ${w.gateId}` : w.source;
+            const tasksLabel = w.taskIds && w.taskIds.length > 0 ? ` (ขวางงาน: ${w.taskIds.join(", ")})` : "";
+            wohHtml += `
+              <div style="margin-bottom: 0.5rem; font-size: 0.875rem;">
+                <span class="badge ${srcClass}">[${safeText(srcLabel)}]</span>
+                <span style="margin-left: 0.5rem;">${safeText(w.text)}</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">${safeText(tasksLabel)}</span>
+              </div>
+            `;
+          });
+          wohList.innerHTML = wohHtml;
+        }
+
+        // 5. Tasks Table (AC-034 · AC-065 · DES-022)
+        const tasks = data.tasks || [];
+        if (tasks.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">ไม่พบรายการ task ใน plan</td></tr>`;
+          return;
+        }
+
+        let rowsHtml = "";
+        tasks.forEach(t => {
+          // Status cell มาจาก plan\index.md เท่านั้น (AC-034)
+          const statusBadge = t.status === "verified" ? "badge-verified" :
+                              t.status === "blocked" ? "badge-error" : "badge-waiting";
+
+          const stepBadge = t.step === "execution" || t.step === "review" || t.step === "qa" ? "badge-running" :
+                            t.step === "held" ? "badge-error" :
+                            t.step === "verified" ? "badge-verified" : "badge-idle";
+
+          const attemptStr = `${t.attempt} / fix:${t.fixRounds}${t.fixRoundLimit ? `/${t.fixRoundLimit}` : ""}${t.crashRestarts ? ` (crash:${t.crashRestarts})` : ""}`;
+
+          // Session Link
+          const sessionBtn = t.sessionId ? `
+            <button class="btn btn-secondary btn-sm" onclick="openSessionModal('${safeText(t.sessionId)}')">
+              ${safeText(t.sessionId.slice(0, 10))}...
+            </button>
+          ` : "<span style='color: var(--text-muted);'>-</span>";
+
+          // Hold Info
+          const holdStr = t.hold ? `<span class="badge badge-error">${safeText(t.hold.reason)}</span>` : "<span style='color: var(--text-muted);'>-</span>";
+
+          // Waiting For (AC-037, AC-064)
+          const wfStr = (t.waitingFor && t.waitingFor.length > 0)
+            ? t.waitingFor.map(w => `<span class="chip" style="margin: 0.1rem;">${safeText(w)}</span>`).join("")
+            : "<span style='color: var(--text-muted);'>-</span>";
+
+          // Action: Retry Button (DES-022)
+          let actionBtn = "-";
+          if (t.hold || t.step === "held") {
+            const holdReason = t.hold ? t.hold.reason : "held";
+            actionBtn = `
+              <button class="btn btn-warning btn-sm" onclick="openRetryModal('${safeText(modName)}', '${safeText(t.taskId)}', '${safeText(holdReason)}')">
+                ปลด Hold (Retry)
+              </button>
+            `;
+          }
+
+          rowsHtml += `
+            <tr>
+              <td>
+                <strong>${safeText(t.taskId)}</strong>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">${safeText(t.name)}</div>
+              </td>
+              <td>${safeText(t.owner)}</td>
+              <td><span class="badge ${statusBadge}">${safeText(t.status)}</span></td>
+              <td><span class="badge ${stepBadge}">${safeText(t.step)}</span></td>
+              <td style="font-size: 0.8rem;">${safeText(attemptStr)}</td>
+              <td>${sessionBtn}</td>
+              <td>${holdStr}</td>
+              <td style="max-width: 200px;">${wfStr}</td>
+              <td>${actionBtn}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = rowsHtml;
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="9" style="color: var(--danger); text-align: center;">Error: ${safeText(e.message)}</td></tr>`;
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // Session Modal (AC-005 · AC-047 · AC-066 · DES-022)
+    // -------------------------------------------------------------------------
+    async function openSessionModal(sessionId) {
+      const modal = document.getElementById("session-modal");
+      const title = document.getElementById("session-modal-id");
+      const content = document.getElementById("session-modal-content");
+      title.textContent = sessionId;
+      content.innerHTML = "<p style='color: var(--text-muted);'>กำลังโหลดข้อมูล session...</p>";
+      modal.style.display = "flex";
+
+      try {
+        const res = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}`);
+        if (!res.ok) {
+          const err = await res.json();
+          content.innerHTML = `<div class="alert alert-danger">ไม่พบ session: ${safeText(err.error)}</div>`;
+          return;
+        }
+        const s = await res.json();
+
+        let ctxFilesHtml = (s.contextFiles || []).map(f => `<li><code>${safeText(f)}</code></li>`).join("");
+        if (!ctxFilesHtml) ctxFilesHtml = "<li style='color: var(--text-muted);'>ไม่มีไฟล์ใน packet</li>";
+
+        let auditHtml = "<span style='color: var(--text-muted);'>ไม่มีข้อมูล</span>";
+        if (s.writeAudit) {
+          const files = s.writeAudit.files || [];
+          auditHtml = files.length > 0
+            ? files.map(f => `<div>• <code>${safeText(f)}</code></div>`).join("")
+            : "<div>ไม่มีการเขียนไฟล์</div>";
+        }
+
+        const priorHtml = s.priorSession ? safeText(JSON.stringify(s.priorSession)) : "<span style='color: var(--text-muted);'>ไม่มี (first session)</span>";
+
+        content.innerHTML = `
+          <div class="grid grid-2" style="margin-bottom: 1rem;">
+            <div>
+              <p><strong>Kind:</strong> <span class="badge badge-purple">${safeText(s.kind)}</span></p>
+              <p><strong>Role:</strong> ${safeText(s.role)}</p>
+              <p><strong>Tasks:</strong> ${(s.taskIds || []).map(safeText).join(", ")}</p>
+              <p><strong>Started:</strong> ${safeText(s.startedAt || "-")}</p>
+              <p><strong>Ended:</strong> ${safeText(s.endedAt || "ยังไม่จบ")}</p>
+            </div>
+            <div>
+              <p><strong>Camp:</strong> ${safeText(s.camp)}</p>
+              <p><strong>Model:</strong> ${safeText(s.model || "-")}</p>
+              <p><strong>Effort:</strong> ${safeText(s.effort || "none")}</p>
+              <p><strong>Basis:</strong> <span style="font-size: 0.85rem; color: var(--text-muted);">${safeText(s.basisReason || "-")}</span></p>
+              <p><strong>Outcome:</strong> ${safeText(s.outcome || "-")}</p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label>Packet Context Files (${(s.contextFiles || []).length} ไฟล์ — AC-047):</label>
+            <ul style="background: #090d16; padding: 0.75rem 1.5rem; border-radius: 0.375rem; border: 1px solid var(--border); font-size: 0.85rem; max-height: 120px; overflow-y: auto;">
+              ${ctxFilesHtml}
+            </ul>
+          </div>
+
+          <div class="grid grid-2" style="margin-bottom: 1rem;">
+            <div>
+              <label>Write Audit (ไฟล์ที่เขียน):</label>
+              <div style="background: #090d16; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border); font-size: 0.85rem; max-height: 100px; overflow-y: auto;">
+                ${auditHtml}
+              </div>
+            </div>
+            <div>
+              <label>Prior Session (AC-066):</label>
+              <div style="background: #090d16; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid var(--border); font-size: 0.85rem; max-height: 100px; overflow-y: auto;">
+                ${priorHtml}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label>Log Tail (50 บรรทัดท้าย — escape ปลอดภัย):</label>
+            <pre><code>${safeText(s.logTail || "ไม่มี log content")}</code></pre>
+          </div>
+        `;
+      } catch (e) {
+        content.innerHTML = `<div class="alert alert-danger">Error: ${safeText(e.message)}</div>`;
+      }
+    }
+
+    function closeSessionModal() {
+      document.getElementById("session-modal").style.display = "none";
+    }
+
+    // -------------------------------------------------------------------------
+    // Retry Modal (DES-022 · AC-016 · R22)
+    // -------------------------------------------------------------------------
+    function openRetryModal(modName, taskId, reason) {
+      retryContext = { module: modName, taskId };
+      document.getElementById("retry-modal-task").textContent = taskId;
+      document.getElementById("retry-modal-reason").textContent = reason;
+      document.getElementById("retry-by").value = "";
+      document.getElementById("retry-note").value = "";
+      document.getElementById("retry-modal").style.display = "flex";
+      document.getElementById("retry-by").focus();
+    }
+
+    function closeRetryModal() {
+      document.getElementById("retry-modal").style.display = "none";
+      retryContext = { module: null, taskId: null };
+    }
+
+    async function confirmRetry() {
+      const { module: modName, taskId } = retryContext;
+      const by = document.getElementById("retry-by").value.trim();
+      const note = document.getElementById("retry-note").value.trim();
+
+      if (!by) {
+        showGlobalAlert("กรุณาระบุชื่อผู้ตัดสิน/ผู้สั่ง retry (ห้ามว่าง)", "danger");
+        return;
+      }
+
+      const btn = document.getElementById("btn-confirm-retry");
+      btn.disabled = true;
+      btn.textContent = "กำลังส่ง...";
+
+      try {
+        const res = await fetch(`/api/modules/${encodeURIComponent(modName)}/tasks/${encodeURIComponent(taskId)}/retry`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ by, note })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showGlobalAlert(`ปลด Hold ไม่สำเร็จ: ${safeText(data.error)}`, "danger");
+          return;
+        }
+
+        showGlobalAlert(`ปลด hold สำเร็จสำหรับ Task ${safeText(taskId)} (กลับสู่ขั้น ${safeText(data.step)}) โดย "${safeText(by)}"`, "success");
+        closeRetryModal();
+        if (activeModule) loadModuleTasks(activeModule);
+      } catch (e) {
+        showGlobalAlert("Error: " + e.message, "danger");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "ยืนยัน Retry";
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // Case 2: New Work Intake (AC-017 / AC-018)
+    // -------------------------------------------------------------------------
+    async function submitNewWork() {
+      const text = document.getElementById("new-work-text").value;
+      const targetMod = document.getElementById("new-work-module").value.trim() || undefined;
+      const kName = document.getElementById("knowledge-select").value;
+      const tName = document.getElementById("target-select").value;
+      const btn = document.getElementById("submit-new-work-btn");
+      const resultDiv = document.getElementById("new-work-result");
+
+      if (!text.trim()) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">กรุณาระบุข้อความงานใหม่ (ห้ามว่าง)</div>`;
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "กำลังส่งงาน...";
+      resultDiv.innerHTML = "";
+
+      try {
+        const res = await fetch("/api/tasks/new", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text,
+            module: targetMod,
+            knowledge: kName,
+            target: tName
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          resultDiv.innerHTML = `<div class="alert alert-danger">ส่งงานไม่สำเร็จ: ${safeText(data.error)}</div>`;
+          btn.disabled = false;
+          btn.textContent = "ส่งงานใหม่ให้ BA";
+          return;
+        }
+
+        resultDiv.innerHTML = `
+          <div class="alert alert-success">
+            <strong>รับงานใหม่สำเร็จ!</strong> Run ID: ${safeText(data.runId)} (Status: ${safeText(data.status)})
+          </div>
+        `;
+        document.getElementById("new-work-text").value = "";
+        updateCharCount();
+        connectSse(data.runId);
+        loadModules();
+      } catch (e) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${safeText(e.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "ส่งงานใหม่ให้ BA";
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // Gates & Approvals (AC-014 / AC-016)
+    // -------------------------------------------------------------------------
+    async function loadGates() {
+      const container = document.getElementById("gates-list");
+      container.innerHTML = "<p style='color: var(--text-muted);'>กำลังตรวจสอบ gates...</p>";
+      try {
+        const res = await fetch("/api/modules");
+        const data = await res.json();
+        const modules = data.modules || [];
+        const allGates = [];
+        modules.forEach(m => {
+          (m.openGates || []).forEach(g => allGates.push({ ...g, moduleName: m.name }));
+        });
+
+        if (allGates.length === 0) {
+          container.innerHTML = "<p style='color: var(--text-muted);'>ไม่มี Gate ที่รอคำตอบในขณะนี้</p>";
+          return;
+        }
+
+        let html = "";
+        allGates.forEach(g => {
+          html += `
+            <div class="card" style="border-left: 4px solid var(--warning);">
+              <div class="card-title">
+                <span>Gate: <strong>${safeText(g.gateId)}</strong> (Scope: ${safeText(g.scope)})</span>
+                <span class="badge badge-waiting">รอการตัดสินใจ</span>
+              </div>
+              <p style="margin-bottom: 0.75rem;"><strong>คำถาม:</strong> ${safeText(g.question)}</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                เจ้าของ/ผู้ตัดสิน: <strong>${safeText(g.owner ? g.owner.name : "human")}</strong> | โมดูล: ${safeText(g.moduleName)}
+              </p>
+              <div style="background: #090d16; padding: 1rem; border-radius: 0.375rem; border: 1px solid var(--border);">
+                <div style="margin-bottom: 0.75rem;">
+                  <label>ชื่อผู้ตัดสิน (พิมพ์ชื่อของคุณ — บันทึกตามจริง AC-016):</label>
+                  <input type="text" id="ans-by-${safeText(g.gateId)}" placeholder="เช่น somchai">
+                </div>
+                <div style="margin-bottom: 0.75rem;">
+                  <label>คำตอบการตัดสินใจ:</label>
+                  <input type="text" id="ans-val-${safeText(g.gateId)}" placeholder="เช่น อนุมัติแบบ ก">
+                </div>
+                <div style="margin-bottom: 0.75rem;">
+                  <label>บันทึกเพิ่มเติม (Optional):</label>
+                  <input type="text" id="ans-note-${safeText(g.gateId)}" placeholder="เหตุผลประกอบ">
+                </div>
+                <button class="btn btn-warning" onclick="submitGateAnswer('${safeText(g.gateId)}')">
+                  ส่งคำตอบตัดสินใจ
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      } catch (e) {
+        container.innerHTML = `<div class="alert alert-danger">Error: ${safeText(e.message)}</div>`;
+      }
+    }
+
+    async function submitGateAnswer(gateId) {
+      const by = document.getElementById(`ans-by-${gateId}`)?.value.trim();
+      const answer = document.getElementById(`ans-val-${gateId}`)?.value.trim();
+      const note = document.getElementById(`ans-note-${gateId}`)?.value.trim();
+
+      if (!by || !answer) {
+        showGlobalAlert("กรุณาระบุชื่อผู้ตัดสินและคำตอบ", "danger");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/gates/${encodeURIComponent(gateId)}/answer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answeredBy: by, answer, note })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showGlobalAlert(`ส่งคำตอบล้มเหลว: ${safeText(data.error)}`, "danger");
+          return;
+        }
+
+        showGlobalAlert(`ตอบ Gate ${safeText(gateId)} สำเร็จโดย "${safeText(by)}"`, "success");
+        loadGates();
+        loadModules();
+        if (activeModule) loadModuleTasks(activeModule);
+      } catch (e) {
+        showGlobalAlert("Error: " + e.message, "danger");
+      }
+    }
+
+    function openGateAnswer(gateId) {
+      switchTab("tab-gates");
+      const input = document.getElementById(`ans-by-${gateId}`);
+      if (input) input.focus();
+    }
+
+    // -------------------------------------------------------------------------
+    // SSE Stream
+    // -------------------------------------------------------------------------
+    function connectSse(runId) {
+      if (currentSse) currentSse.close();
+      const indicator = document.getElementById("sse-status");
+      indicator.textContent = "Connecting SSE...";
+      indicator.className = "badge badge-waiting";
+
+      currentSse = new EventSource(`/api/runs/${encodeURIComponent(runId)}/events`);
+      currentSse.onopen = () => {
+        indicator.textContent = `Connected (${runId.slice(0, 8)})`;
+        indicator.className = "badge badge-running";
+      };
+      currentSse.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          loadModules();
+          loadGates();
+          if (activeModule) {
+            loadModuleTasks(activeModule);
+          }
+        } catch {}
+      };
+      currentSse.onerror = () => {
+        indicator.textContent = "SSE Disconnected";
+        indicator.className = "badge badge-idle";
+        currentSse.close();
+      };
+    }
+
+    function showGlobalAlert(msg, type = "info") {
+      const container = document.getElementById("global-notifications");
+      const alertDiv = document.createElement("div");
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.textContent = msg; // safeText via textContent
+      container.appendChild(alertDiv);
+      setTimeout(() => alertDiv.remove(), 6000);
+    }
+
+    function updateCharCount() {
+      const len = document.getElementById("new-work-text").value.length;
+      const el = document.getElementById("new-work-count");
+      el.textContent = `${len.toLocaleString()} / 20,000`;
+      el.style.color = len > 20000 ? "var(--danger)" : "var(--text-muted)";
+    }
+    document.getElementById("new-work-text").addEventListener("input", updateCharCount);
+
+    // Initial load
+    init();
+  </script>
+</body>
+</html>

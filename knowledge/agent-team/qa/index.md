@@ -27,6 +27,16 @@
 | 18 | Feature QA — Phase 3 (รอบใหม่ — ปิด QA-007) | ❌ Failed | round-18.md |
 | 19 | Feature QA — Phase 3 (รอบ 19 — ปิด QA-009) | ❌ Failed | round-19.md |
 | 20 | BE-013, BE-014 | ✅ Verified | round-20.md |
+| 21 | Feature QA — Phase 3 (รอบ 21 — ปิด QA-010) | ✅ Verified | round-21.md |
+| 22 | BE-010 | ✅ Verified | round-22.md |
+| 23 | BE-015 | ✅ Verified | round-23.md |
+| 24 | BE-023 | ✅ Verified | round-24.md |
+| 25 | FE-001 | ✅ Verified | round-25.md |
+| 26 | FE-002 | ✅ Verified | round-26.md |
+| 27 | Feature QA — Phase 5 (BE-010, BE-015, BE-023, FE-001, FE-002) | ✅ Verified | round-27.md |
+| 28 | Feature QA — Phase 6 (QA-001) | ✅ Verified | round-28.md |
+| 29 | Feature QA — Phase 7 (QA-002) | ✅ Verified | round-29.md |
+| 30 | DEVOPS-001 | ✅ Verified | round-30.md |
 
 ## Findings
 
@@ -65,5 +75,18 @@
 - 2026-10-07 — round 18 (Feature QA — Phase 3 รอบใหม่): ❌ Failed — **qa:QA-007 resolved**: dispatch จริงผ่าน (argv `--json-schema` = inline JSON 6,095 ตัวอักษร ไม่มี `$schema` ราก · CLI 2.1.292 exit 0 · session จริง 2 ตัว เขียนไฟล์จริง · structured_output ผ่าน `handoffProblems` = 0) · qa:QA-009 ใหม่ Important เจ้าของ BE-011 — driver `extractHandoff` (`driver.ts:1330`) ไม่ unwrap `structured_output` ของ result envelope → R15 hold ทุก task → flow หลัง session จบตาย (DAG parallel/review wave/QA round/write-back/Feature QA/gate/kill-restart ไม่ได้วิ่งจริงรอบนี้ — evidence fake จาก round 17 ยังครอบ) · npm test 283/283 · fixture ลบ + sta-config คืน sha256 ตรง + state คืน .gitkeep · ต่อไป: engineer แก้ QA-009 → round 19 (ถ้า fail เป็นรอบที่ 3 ของ phase 3 — ถามผู้ใช้)
 - 2026-10-07 — round 19 (Feature QA — Phase 3 รอบ 19): ❌ Failed — **qa:QA-009 resolved**: `extractHandoff` unwrap `structured_output` ต่อ camp (`driver.ts:1333` + `claude.ts:67`) · npm test 289/289 (unit QA-009 4 เคส) · live 3 run บน fixture — run 3 (15 session จริง) R15 = 0 ทั้ง run · ขาที่ถูกบล็อกรอบ 18 เดินจริงครบ: AC-045 parallel (3 session ใน 47 ms) · review wave → QA round → write-back (AC-073 เฉพาะ cell) → Feature QA (R18/R19 phase cleared) · gate R12 + stdout (task ใน scope hold นอก scope เดินต่อ) · kill-restart ×3 (finalize interrupted → R16 + priorSession · งานเสร็จไม่ dispatch ซ้ำ) · qa:QA-010 ใหม่ Important เจ้าของ BE-019 — R2 ตรวจ `auditSuspects` เฉพาะ execution (`router.ts:533`) → violation ของ review/qa/feature-qa ไม่ hold ตัดสินต่อ (ขัด DES-018 R2 + DES-021 §4) · fixture ลบ + sta-config คืน sha256 ตรง + state คืน .gitkeep · **ครบ 3 รอบ FAIL ของ phase 3 → หยุดที่ human gate — ผู้ใช้ตัดสิน: ยอมรับ / ส่ง engineer แก้ QA-010 / re-scope**
 - 2026-10-07 — round 20 (BE-013, BE-014): ✅ Verified — รันเช็คเอง (npm test **324/324** · camp-codex 17 + camp-antigravity 18 · tsx -e 6 ชุด: argv จาก camps.yaml จริงตรง DES-002 ทั้งสอง camp (codex exec/-C/-m/-c effortVia/--output-schema path/last-message · agy -p/--json-schema path/--add-dir/--log-file session.log) · AC-033 ไม่มี resume/bypass · effort null ไม่ปรากฏ · last-message/stdout → handoff ผ่าน `handoffSchemaProblems` · retry/kill/timeout · fail-closed ก่อน spawn (spawnFn ไม่ถูกเรียก) · wiring REV-055 resolved: `main.ts:94-100` register ครบ 3 camp พิสูจน์ด้วย constructor จริง `campAdapterProblems` = [] + grep "มี camp เดียว" = 0 hits) · sync Status BE-013/BE-014 `pending → verified` — phase 4 verified ครบ 2/2 · ไม่มี QA finding ใหม่ (review:REV-056 คง → backlog) · spawn CLI จริง codex/agy = Unverified Behaviour ของ Feature QA phase 4 (round-20.md)
+- 2026-10-07 — round 21 (Feature QA — Phase 3): ✅ Verified — **qa:QA-010 resolved** (เจ้าของ jtrp98 เลือกข้อ ก ใน Waiting on Human #9 · backend-engineer แก้ router.ts ตรวจ auditSuspects ก่อน switch · unit test regression 2 เคสใน router.test.ts · npm test **334/334**) · Feature QA Phase 3 PASS ครบทุก flow · ปลดล็อคเปิด 🔒 security stage ของ Phase 3
+- 2026-10-07 — round 22 (BE-010): ✅ Verified — รันเช็ค AC-017, AC-018, AC-019 ครบถ้วน (untrusted text, guard, decision, chain, gate, fail-closed) · npm test **334/334** · sync Status BE-010 `pending → verified` ใน `plan\index.md`
+- 2026-10-07 — round 23 (BE-015): ✅ Verified — รันเช็ค loopback binding, DNS rebinding guard, endpoints ครบตาม DES-009, start OQ-5/AC-072, task text limit 20k (AC-017), gates latest/answer + terminal banner (AC-014), main --serve wiring · npm test **341/341** · sync Status BE-015 `pending → verified` ใน `plan\index.md`
+- 2026-10-07 — round 24 (BE-023): ✅ Verified — รันเช็ค 3 endpoint ต่อ task ตาม DES-022: GET /tasks (Status จาก plan เท่านั้น, waitingFor, waitingOnHuman 3 แหล่ง), POST /retry (Origin CSRF guard, hold ห้ามปลด 409, ปลดสำเร็จไม่ reset ตัวนับ, humanActions), GET /sessions/<sessionId> (contextFiles, logTail 50 บรรทัด) · npm test **344/344** · sync Status BE-023 `pending → verified` ใน `plan\index.md`
+- 2026-10-07 — round 25 (FE-001): ✅ Verified — ตรวจสอบ Web UI static single page (vanilla HTML/CSS/JS) ไม่มี external resources · 2 กรณี REQ-001 ครบถ้วน (เลือกงานเดิม + รับงานใหม่) + หน้าตอบ gate (AC-014, AC-016 บังคับพิมพ์ answeredBy) · OQ-5 409 redirect · XSS escaping ปลอดภัย · npm test **344/344** · sync Status FE-001 `pending → verified` ใน `plan\index.md`
+- 2026-10-07 — round 26 (FE-002): ✅ Verified — ตรวจสอบ Web UI dashboard ต่อ task · แสดง Status จาก plan (AC-034), concurrency n / max (AC-045), step, attempt, hold, waitingFor (AC-037, AC-064) · แผง Waiting on Human ป้ายที่มา doc/gate/hold (AC-014, AC-072) · แถบ migrate plan legacy (AC-074) · session modal แสดง contextFiles (AC-047), writeAudit, priorSession (AC-066), logTail escape · retry modal บังคับกรอก by (AC-016) ไม่ reset ตัวนับ · npm test **344/344** · sync Status FE-002 `pending → verified` ใน `plan\index.md`
+- 2026-10-07 — round 27 (Feature QA — Phase 5): ✅ Verified — **PASS ครบทุก flow** (เปิด browser → งานใหม่ถึง BA → เลือกงานเดิมเริ่ม OQ-5 409 → ดูงานต่อ task DES-022 → ตอบ gate → retry ไม่ reset ตัวนับ) · npm test **345/345** · ปลดล็อคเปิด 🔒 security stage ของ Phase 5
+- 2026-10-07 — round 28 (Feature QA — Phase 6 / QA-001): ✅ Verified — **PASS ครบทุก flow** (E2E orchestrated pipeline สมบูรณ์ + smoke จริงครบ 3 camp: claude 2.1.292, codex 0.160.0, agy 1.2.16) · npm test **345/345** · sync Status QA-001 `pending → verified` · Phase 6 ไม่มี 🔒 security gate ถือว่า `cleared` ทันที
+- 2026-10-07 — round 29 (Feature QA — Phase 7 / QA-002): ✅ Verified — **PASS ครบทุก flow** (จุดเข้า solo 4 agents ผ่าน pack เดียวกัน, serial pipeline, สลับโหมดสองทิศทาง, plan validator v2 ผ่าน 20/20) · sync Status QA-002 `pending → verified` · Phase 7 `cleared` ปลดล็อค `DEVOPS-001`
+- 2026-10-07 — round 30 (DEVOPS-001): ✅ Verified — ตรวจสอบ runbook ใน `knowledge\agent-team\deploy.md` จัดทำครบถ้วนตาม template และสอดคล้องกับพฤติกรรมจริงของระบบ (npm test 345/345 + review round 28 PASS) · sync Status DEVOPS-001 `pending → verified`
 
 Back-links: `..\index.md`
+
+
+

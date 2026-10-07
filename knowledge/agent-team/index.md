@@ -13,6 +13,8 @@
 | `plan\index.md` | สารบัญ plan — release scope, phase, task ต่อไฟล์ | พร้อม |
 | `open-questions\index.md` | สารบัญ OQ ทั้ง 25 — ไฟล์รายตัว oq-1…20, oq-d1…d5 (ปิดครบ) | พร้อม |
 | `backlog.md` | งานที่ทำทีหลัง (append-only) | พร้อม |
+| `security.md` | บันทึกความปลอดภัยและการประเมิน 🔒 security gates | พร้อม |
+| `deploy.md` | Runbook ติดตั้ง, รัน, กู้คืน และประวัติการ Deploy R1 | พร้อม |
 
 ## Change Log
 
@@ -30,3 +32,4 @@
 - 2026-10-05 — ปิด OQ-10…19: เจ้าของ (jtrp98) เลือกตัวเลือกตามข้อเสนอของ BA ทุกข้อ → amend REQ-003/006/008/011/012/013/015/017/018/020/021 + `requirement\scope.md` · เพิ่ม AC-073…078 · ตัวเลข config ตั้งต้นยังเป็นสมมติฐาน
 - 2026-10-05 — gate 7: เจ้าของ (jtrp98) เลื่อน REQ-009 (สวิตช์ git `gituse`, AC-025…032) ไป release ถัดไป — R1 ใช้กติกา no state-changing git เดิม · แก้ `requirement\index.md`, `requirement\scope.md`, `requirement\req-009.md` · เปิด OQ-20 (task Owner reviewer/security ใน orchestrated mode) รอเจ้าของ
 - 2026-10-05 — ปิด OQ-20: เจ้าของ (jtrp98) เลือกข้อ (ก) ตามข้อเสนอของ BA — task ใน plan ห้าม Owner reviewer/security (review มาจาก wave, security = stage ท้าย phase 🔒) → REQ-011 (+AC-079), REQ-012, REQ-015 (+AC-080), REQ-021
+- 2026-10-07 — **ปิด Release R1 (DONE / RELEASED):** ผู้ใช้ (`jtrp98`) อนุมัติรับมอบงาน Release R1 Local อย่างเป็นทางการตามข้อกำหนด Done = released — สโคปงานทั้ง 34 tasks (Phase 1–7) ผ่านการ implement, review, และ QA ครบ 100%, test suite 345/345 ผ่าน, smoke จริงครบ 3 camp (claude, codex, agy), runbook `deploy.md` พร้อมใช้งาน

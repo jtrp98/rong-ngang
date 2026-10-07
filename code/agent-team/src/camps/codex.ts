@@ -38,7 +38,7 @@ export function codexOutputMeta(stdout: string): { cliSessionId: string | null; 
     }
     if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) continue;
     const rec = parsed as Record<string, unknown>;
-    if (cliSessionId === null) cliSessionId = pick(rec, "session_id");
+    if (cliSessionId === null) cliSessionId = pick(rec, "session_id") ?? pick(rec, "thread_id");
     if (cliVersion === null) cliVersion = pick(rec, "version");
   }
   return { cliSessionId, cliVersion };

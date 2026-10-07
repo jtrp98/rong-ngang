@@ -9,15 +9,15 @@
 **อยู่ใน release:** REQ-001…008, REQ-010…021 · AC-001…024, AC-033…080 (AC-079/080 = OQ-20 ใน REQ-011/015 — **ยืนยันโดยเจ้าของ jtrp98 2026-10-06** พร้อม phase 6/7) · DES-001…014, DES-015 (ส่วน sta-config — ไม่รวม `gituse`), DES-018…022 (DES-006/009/012/013 เฉพาะส่วนที่ไม่ใช่ REQ-009) · tasks: SETUP-001…005, SETUP-007, SETUP-008, SETUP-009 (BL-023/024/029/030 ดึงเข้า R1 — เจ้าของ jtrp98 2026-10-06), BE-001…015, BE-018…023, FE-001, FE-002, QA-001, QA-002, DEVOPS-001
 **ไม่อยู่ใน release (ไป release ถัดไป):** REQ-009 · AC-025…032 · DES-016, DES-017 + ส่วน `gituse` ของ DES-015 + ส่วน REQ-009 ใน DES-006/009/012/013 · tasks BE-016, BE-017, SETUP-006 และส่วน "(REQ-009)" ที่ถอดจาก task เดิม → `backlog.md` BL-013…018 (ข้อความเดิมตรงตัว §Archive)
 **Done เมื่อ:** QA-001 ผ่าน (Feature QA phase 6) — orchestrator รัน pipeline จริงครบ 1 module ทดสอบ (งานใหม่ถึง business-analyst → change chain → DAG parallel → review wave → QA round → Feature QA → security stage → human gate และวิ่งต่อหลังตอบ) + AC ฝั่ง orchestrated ใน AC-033…080 ผ่าน + smoke จริงครบ 3 camp และ QA-002 ผ่าน (Feature QA phase 7) — solo mode ครบ 4 agents (claude, codex, antigravity, zcode) ด้วยรูปเอกสาร v2 + สลับโหมดสองทิศ · deploy.md มี runbook · ผู้ใช้ยอมรับมอบบนเครื่อง local (ไม่มี deploy environment ภายนอก)
+**สถานะการส่งมอบ:** ✅ **DONE / RELEASED** — ผู้ใช้ (`jtrp98`) อนุมัติรับมอบงาน Release R1 Local อย่างเป็นทางการเมื่อ 2026-10-07 (Human Gate 7 ครบถ้วน)
 ของที่ไม่อยู่ในรายการนี้ไปอยู่ `backlog.md` — ย้ายเข้ามาได้เฉพาะเมื่อผู้ใช้สั่ง
 
 ## Waiting on Human
 
 | # | ต้องตัดสินอะไร | ตัวเลือก | ผู้ตัดสิน | ขวาง task |
 |---|---|---|---|---|
-| 9 | Feature QA phase 3 FAIL ครบ 3 รอบ (rounds 17–19) — qa:QA-010 (Important, BE-019): router ตรวจ `auditSuspects` เฉพาะ `case "execution"` (`router.ts:533`) ขัด DES-018 แถว R2 + DES-021 §4 ที่ให้ violation จาก session ใดก็ได้ → R2 hold — ผล: write violation ของ feature-qa/reviewer ไหลผ่าน ไม่ถูก hold (violation ยังจดใน writeAudit ตรวจย้อนหลังได้) | (ก) ส่งกลับ engineer แก้ QA-010 (BE-019) แล้ว QA รอบ 20 (ข) ยอมรับความเสี่ยง — บันทึก acceptance แล้ว QA-010 → backlog (ค) re-scope release | jtrp98 (เจ้าของ) | phase 3 clearance + 🔒 security stage · Feature QA รอบ 20 · (งาน phase 4/5 build ต่อได้ — ไม่ถูกขวาง) |
 
-ไม่มีเรื่องค้าง ณ 2026-10-06 (replan Rev 11/12 ไม่มีคำถามใหม่ — G2-f/OQ-20 ปิดแล้วที่ design) · #1–#8 เดิมปิดแล้ว (#3–#6, #8: เจ้าของ jtrp98 เลือก "ไป release ถัดไป" 2026-10-05 · #7: build orchestrator แบบ solo ไม่แก้ deny — jtrp98 2026-10-05 · #1, #2: ผู้ใช้ 2026-10-04) — แถวเดิมตรงตัว → `..\backlog.md` §Archive C
+ไม่มีเรื่องค้าง ณ 2026-10-07 — #9 ปิดแล้ว (เจ้าของ jtrp98 เลือกข้อ ก เมื่อ 2026-10-07: ส่งกลับ engineer แก้ QA-010 และ Feature QA Phase 3 PASS ใน round 21) · #1–#8 เดิมปิดแล้ว — แถวเดิมตรงตัว → `..\backlog.md` §Archive C
 
 ## Phases
 
@@ -64,14 +64,14 @@
 | BE-011 | Pipeline driver + DAG scheduler | backend-engineer | 3 | BE-004, BE-005, BE-006, BE-007, BE-008, BE-009, BE-018, BE-019, BE-020, BE-021, BE-022 | verified |
 | BE-013 | Camp adapter: codex | backend-engineer | 4 | BE-006, BE-012 | verified |
 | BE-014 | Camp adapter: antigravity | backend-engineer | 4 | BE-006, BE-012 | verified |
-| BE-010 | Intake งานใหม่ → BA packet | backend-engineer | 5 | BE-006, BE-007, BE-009, BE-011 | pending |
-| BE-015 | Local API server + composition root | backend-engineer | 5 | BE-010, BE-011 | pending |
-| BE-023 | Task dashboard API + human retry | backend-engineer | 5 | BE-011, BE-015 | pending |
-| FE-001 | Dashboard UI 2 กรณี + หน้าตอบ gate | frontend-engineer | 5 | BE-015 | pending |
-| FE-002 | Dashboard ต่อ task + หน้า session + retry | frontend-engineer | 5 | BE-023, FE-001 | pending |
-| QA-001 | E2E orchestrated + smoke ครบ 3 camp | qa-engineer | 6 | BE-011, BE-012, BE-013, BE-014, BE-015, BE-023, FE-001, FE-002, SETUP-009 | pending |
-| QA-002 | E2E solo mode 4 agents + สลับโหมด | qa-engineer | 7 | SETUP-003, SETUP-008, QA-001 | pending |
-| DEVOPS-001 | deploy.md runbook | devops | 7 | QA-001, QA-002 | pending |
+| BE-010 | Intake งานใหม่ → BA packet | backend-engineer | 5 | BE-006, BE-007, BE-009, BE-011 | verified |
+| BE-015 | Local API server + composition root | backend-engineer | 5 | BE-010, BE-011 | verified |
+| BE-023 | Task dashboard API + human retry | backend-engineer | 5 | BE-011, BE-015 | verified |
+| FE-001 | Dashboard UI 2 กรณี + หน้าตอบ gate | frontend-engineer | 5 | BE-015 | verified |
+| FE-002 | Dashboard ต่อ task + หน้า session + retry | frontend-engineer | 5 | BE-023, FE-001 | verified |
+| QA-001 | E2E orchestrated + smoke ครบ 3 camp | qa-engineer | 6 | BE-011, BE-012, BE-013, BE-014, BE-015, BE-023, FE-001, FE-002, SETUP-009 | verified |
+| QA-002 | E2E solo mode 4 agents + สลับโหมด | qa-engineer | 7 | SETUP-003, SETUP-008, QA-001 | verified |
+| DEVOPS-001 | deploy.md runbook | devops | 7 | QA-001, QA-002 | verified |
 
 ## Sequencing Notes
 
@@ -112,3 +112,9 @@
 - 2026-10-07 — Feature QA phase 3: round 17 FAIL (qa:QA-007 Important — `--json-schema` ส่ง path แต่ CLI รับ inline JSON; แก้แล้ว พิสูจน์ CLI จริง) · round 18 FAIL (qa:QA-009 Important — extractHandoff ไม่ unwrap `structured_output`; แก้แล้ว) · round 19 — QA-009 ปิด + pipeline จริงเดินครบ (15 session จริง: DAG ขนาน 47ms, wave, QA จริง, write-back เฉพาะ cell, gate แจ้ง, kill-restart) แต่เจอ qa:QA-010 Important (BE-019 — router เช็ค auditSuspects เฉพาะ execution ขัด DES-018 R2/DES-021) — **ครบ 3 รอบ → human gate (รอเจ้าของตัดสิน: แก้ / ยอมรับความเสี่ยง / re-scope)** — phase 3 ยังไม่ cleared, security stage ยังไม่เปิด
 - 2026-10-07 — เพิ่ม Waiting on Human #9: ตัดสิน qa:QA-010 หลัง Feature QA phase 3 FAIL ครบ 3 รอบ (แก้ / ยอมรับความเสี่ยง / re-scope) — phase 3 ยังไม่ cleared
 - 2026-10-07 — REV-055 (review round 21, Important — plan gap): PM ตัดสิน amend Write paths BE-013/014 +`src/main.ts` (เฉพาะส่วน register adapters + comment) ให้ register codex/agy ที่ composition root ตอนนี้ — คงลำดับ phase (flow QA ของ phase 4 ต้องมี wiring ก่อน; ตัวเลือกเลื่อนไป BE-015 = phase 4 รอ phase 5 กลับลำดับ) · BE-015 คงเดิม (wire server ภายหลัง) · ต่อไป: backend-engineer แก้ wiring → reviewer resolve REV-055
+- 2026-10-07 — ปิด Waiting on Human #9 ตามคำตัดสินเจ้าของ jtrp98 (เลือกข้อ ก): backend-engineer แก้ QA-010 (BE-019) ใน router.ts ตรวจ auditSuspects ก่อน switch · Feature QA Phase 3 PASS ใน qa round 21 (npm test 334/334) · Phase 3 ปลดล็อคเข้าสู่ 🔒 security stage
+- 2026-10-07 — Phase 6 ปิดครบ: QA-001 (Feature QA Phase 6) ✅ Verified ใน qa round 28 (npm test 345/345 + smoke ครบ 3 camp: claude 2.1.292, codex 0.160.0, agy 1.2.16) · sync Status QA-001 `pending → verified` · Phase 6 `cleared` เข้าสู่ Phase 7
+- 2026-10-07 — Phase 7: QA-002 (Feature QA Phase 7) ✅ Verified ใน qa round 29 (solo mode 4 agents ครบ, สลับสองทิศ, docs validator 20/20) · sync Status QA-002 `pending → verified` · Phase 7 `cleared` ปลดล็อค `DEVOPS-001`
+- 2026-10-07 — Phase 7 ปิดครบ: DEVOPS-001 ✅ Verified ใน qa round 30 (deploy.md runbook ตรง template + npm test 345/345 + smoke 3 camp + review round 28 PASS) · sync Status DEVOPS-001 `pending → verified` · **ทุก task ใน Release R1 (34/34 tasks) ครบถ้วน verified 100%**
+- 2026-10-07 — **Human Gate 7 (Release Acceptance):** ผู้ใช้ (`jtrp98`) อนุมัติรับมอบงาน Release R1 Local อย่างเป็นทางการ — ทุกเงื่อนไขความสำเร็จ Done = released ครบถ้วนสมบูรณ์ — **ปิด Release R1 (DONE / RELEASED)**
+
