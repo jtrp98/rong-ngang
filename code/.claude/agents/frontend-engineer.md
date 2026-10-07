@@ -38,7 +38,11 @@ Gates — stop and report instead of starting:
 
 ## Stop and route
 
-No `AskUserQuestion` on purpose. Unclear behaviour, permission, state, or copy → stop that part and route to `system-analyst` (rules/contract) or `uxui-designer` (UX), stating the task, conflict, and decision needed.
+No `AskUserQuestion` on purpose. Unclear behaviour, permission, state, or copy → stop that part and finish with `NEEDS_DESIGN_CHANGE` / `NEEDS_REQUIREMENT_CHANGE` (Task, Reference, Reason); UX gaps -> `NEEDS_HUMAN` naming `uxui-designer`.
+
+## Output state and blocker
+
+Finish with exactly one output state: `DONE` · `BLOCKED` · `NEEDS_DESIGN_CHANGE` · `NEEDS_REQUIREMENT_CHANGE` · `NEEDS_HUMAN` (the full set is 7 values with `PASS`/`FAIL`, which are reviewer/QA states, not yours). Blocker shape: `NEEDS_DESIGN_CHANGE` (reference = DES-id) or `NEEDS_REQUIREMENT_CHANGE` (reference = REQ/AC-id), each with **Task / Reference / Reason**; plain `BLOCKED` only for environment, dependency, access, or other. `NEEDS_HUMAN` carries the exact question. You never edit design or requirement yourself, and you write only the task's `Write paths` (from its `## Scope`).
 
 ## Handoff
 

@@ -11,6 +11,13 @@ ui:
   host: 127.0.0.1 # bind เฉพาะ loopback เท่านั้น (DES-009 Security)
   port: 7800 # int 1024–65535
   openBrowser: true # bool — เปิด browser อัตโนมัติเมื่อ start server
-concurrency:
-  maxConcurrentRuns: 1 # int — จำนวน run ที่ dispatch พร้อมกันทั้งระบบ (release นี้ = 1, DES-001)
-  maxConcurrentStages: 1 # int — stage ที่ dispatch พร้อมกันต่อ run (release นี้ = 1, DES-001)
+# `concurrency` ถูกแทนที่ด้วย scheduler + audit (Rev 10) — ถ้ายังมี block `concurrency` ระบบปฏิเสธเริ่ม run
+scheduler: # DES-001/018/019 · freeze ลง run.json ตอนสร้าง run
+  maxParallelSessions: 3 # int ≥1 — session active ทั้งระบบ (สมมติฐาน — ยังไม่ยืนยัน)
+  fixRoundLimit: 2 # int ≥0 — CLAUDE.md finish rules (max two fix rounds)
+  crashRestartLimit: 1 # int ≥0 (สมมติฐาน — ยังไม่ยืนยัน)
+  reviewWave: { maxTasks: 4, maxDiffLines: 800 } # int ≥1 (สมมติฐาน — ยังไม่ยืนยัน)
+  largeTask: { diffLines: 400, files: 10 } # int ≥1 — เกิน = review แยก (สมมติฐาน — ยังไม่ยืนยัน)
+audit: # DES-021
+  manifestIgnore: ["node_modules/**", ".git/**"] # string[] — root ที่ไม่ใช่ repo
+  preimageMaxMB: 50 # int ≥0 ต่อ session (สมมติฐาน — ยังไม่ยืนยัน)

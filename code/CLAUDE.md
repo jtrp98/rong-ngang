@@ -13,7 +13,7 @@ Pack root (`packRoot`) = `code\` (โฟลเดอร์นี้ — pack ย
 |---|---|
 | Docs root | `C:\src\AICode\rong-ngang\knowledge\` (module docs live in `knowledge\<module>\` — split layout, see below) |
 | Code roots | `C:\src\AICode\rong-ngang\code` — read-only unless a stage is told to write |
-| Stack | Orchestrator: TypeScript, Node ≥ 20, run with tsx — see `knowledge\agent-team\plan\` tasks BE-001…015. Anything else: inspect the real code and fill this in, never guess |
+| Stack | Orchestrator: TypeScript, Node ≥ 20, run with tsx — see `knowledge\agent-team\plan\` tasks BE-001…015 + BE-018…023 (BE-016/017 ย้าย backlog). Anything else: inspect the real code and fill this in, never guess |
 | Check commands | `npm install` · `npm test` · `npm start` — รันที่ `code\agent-team\` (SETUP-001 ตรวจผ่านจริง 2026-10-05) |
 | Language | Converse and write documents in Thai; keep technical terms, identifiers, paths in English |
 
@@ -29,7 +29,7 @@ knowledge\<module>\
 ├── index.md            ← สารบัญหลัก (BA เป็น owner) — สารบัญล้วน: ลิงก์ index ย่อย + change log + วิธีอ่าน
 ├── requirement\        ← index.md (ตาราง REQ + status) + scope.md (เนื้อหา module-level) + req-001.md… (1 REQ ต่อไฟล์)
 ├── design\             ← index.md (feasibility + ตาราง DES) + data-model.md + des-001.md… (1 contract ต่อไฟล์) + archive.md
-├── plan\               ← index.md (release scope, waiting-on-human, phases, ตาราง task: id|status) + <task-id>.md… (1 task ต่อไฟล์)
+├── plan\               ← index.md (release scope, waiting-on-human, phases, ตาราง Tasks 6 คอลัมน์ `Task|Name|Owner|Phase|Depends|Status`) + <task-id>.md… (1 task ต่อไฟล์ · 8 หัวข้อ ไม่มี Status)
 ├── test-plan\ review\ qa\   ← โครงเดียวกัน (qa/review แตกต่อ round: round-N.md)
 ├── open-questions\     ← index.md (ตาราง OQ) + oq-<id>.md… (1 OQ ต่อ 1 ไฟล์)
 ├── uxui\               ← UX-NNN-<slug>.md
@@ -39,7 +39,7 @@ knowledge\<module>\
 **กติกาอ่าน — index-first:** อ่าน index ของหมวดที่ packet/brief ชี้ก่อน แล้วเปิดเฉพาะไฟล์ที่ระบุ
 (packet `readSections` เป็น **path ตรง** เช่น `design\des-006.md`) **ห้าม ls ห้ามอ่านข้ามหมวด** —
 grep ภายในไฟล์ที่ได้รับอนุญาตทำได้ · index ของหมวดคือแหล่งรายชื่อไฟล์เดียว · **Status อยู่ที่ index
-เท่านั้น** — task status = คอลัมน์เดียวใน `plan\index.md`, REQ status = `requirement\index.md`.
+เท่านั้น** — task status = คอลัมน์เดียวใน `plan\index.md` (ผู้เขียนตามโหมด: orchestrated = orchestrator คัดลอกจาก verdict ของ qa-engineer · solo = qa-engineer เขียนเอง), REQ status = `requirement\index.md`.
 
 ## Roles
 
@@ -47,16 +47,18 @@ grep ภายในไฟล์ที่ได้รับอนุญาตท
 |---|---|---|
 | `business-analyst` | `requirement\**`, `open-questions\**`, module `index.md` | user, `requirement\index.md` + req/scope ที่เกี่ยว, qa/design สำหรับ amends |
 | `system-analyst` | `design\**` | `requirement\index.md` + `scope.md` + req ที่ brief ชี้, real code/schema |
-| `project-manager` | `plan\**`, `backlog.md` (ยกเว้นคอลัมน์ Status ของ `plan\index.md` = qa) | design\, requirement |
+| `project-manager` | `plan\**`, `backlog.md` (ยกเว้นคอลัมน์ Status ของ `plan\index.md` = ผลจาก qa ตามโหมด) | design\, requirement |
 | `test-planner` | `test-plan\**` (only when triggered) | requirement, design, plan |
 | `uxui-designer` | `uxui\UX-*.md` drafts | requirement, design, design sources |
 | `setup` | project skeleton (once) + pack ตาม task เท่านั้น | design, stack |
 | `backend-engineer` | `code\**` | plan task, design\des ที่ task ชี้, requirement\req ที่ task ชี้, review/qa rounds |
 | `frontend-engineer` | `code\**` | same + signed UX artifact + real backend contract |
 | `reviewer` | `review\**` | requirement, design, plan task, changed code |
-| `qa-engineer` | `qa\**` + **คอลัมน์ Status ของ `plan\index.md` เท่านั้น** | everything + real code + check results |
+| `qa-engineer` | `qa\**` + verdict ที่ใช้เป็นค่า Status ของ `plan\index.md` (solo: เขียนคอลัมน์เองเท่านั้น · orchestrated: orchestrator คัดลอกให้) | everything + real code + check results |
 | `security` | `security.md` (ไฟล์เดียว) | requirement, design, real code |
 | `devops` | `deploy.md`, infra files in code | qa, security, plan, design |
+
+**Orchestrated mode — ข้อยกเว้น (เจ้าของ jtrp98 2026-10-05; `requirement\scope.md` Constraints ก–ง):** (ก) รัน task ที่ runnable พร้อมกัน, orchestrator เป็นเจ้าของ runtime state แทน "main session is the pipeline driver" (ข) ตาราง task 6 คอลัมน์ และไม่มี Status ใน task file (ค) reviewer/QA เป็น clean session แบบ batch ต่อ wave/round (ง) คอลัมน์ Status เขียนโดย orchestrator จาก verdict ของ qa-engineer · finish rules, human gates 7 จุด, max two fix rounds คงเดิม · **solo mode คง serial** และ qa-engineer เขียน Status เอง
 
 No subagent invokes another. Each ends with a short handoff: result, evidence, blockers, next role.
 
@@ -109,7 +111,7 @@ stated; they never write one themselves.
 ## Hard rules nothing enforces except you
 
 - **No state-changing git.** Read-only `status/log/diff/show` is fine; commit/push/branch/merge are the user's (`.claude/settings.json` denies the common ones — that list is not complete, the rule is).
-- **Write only where the active role allows.** Engineers never edit module docs; only `qa-engineer` sets the Status column of `plan\index.md`.
+- **Write only where the active role allows.** Engineers never edit module docs; the Status column of `plan\index.md` comes only from `qa-engineer`'s verdict — solo: qa-engineer writes it; orchestrated: the orchestrator copies it.
 - **Amend, never regenerate** an existing file: `Edit` the affected sub-file, add a dated Change Log line, update the index row if status changed.
 - **Dates come from the user.** Ask once per session, reuse the answer. Never infer a date.
 - **Unsourced numbers are assumptions** — mark `(สมมติฐาน — ยังไม่ยืนยัน)` until a person confirms.

@@ -1,6 +1,6 @@
 # agent-team — Requirement Scope
 
-> เนื้อหา module-level ของ BA (ย้าย verbatim จาก `..\index.md` ตาม DES-014 ฉบับปรับปรุง 2026-10-05 — module index เป็นสารบัญล้วน) · Budget ≤ 12 KB · เขียนโดย `business-analyst` เท่านั้น · ตาราง REQ: `index.md` ในโฟลเดอร์นี้ · สารบัญหลัก: `..\index.md`
+> เนื้อหา module-level ของ BA · Budget ≤ 12 KB · เขียนโดย `business-analyst` เท่านั้น · ตาราง REQ: `index.md` ในโฟลเดอร์นี้ · สารบัญหลัก: `..\index.md`
 
 ## Overview
 
@@ -26,6 +26,10 @@
 
 **อยู่ใน release นี้:** REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008 — solo mode รองรับ 4 agents ตั้งแต่ release นี้: claude, codex, antigravity, zcode (จุดเข้าต่อ agent ออกแบบใน design — DES-013)
 
+**R1 ขยาย (gate 7 — ผู้ใช้ยืนยัน 2026-10-05):** REQ-010…REQ-021 + ส่วนขยายใน REQ-001/003/006/008 — refactor session lifecycle, dependency execution, runtime state, orchestration ตาม spec ของเจ้าของ (jtrp98) 2026-10-05 · route BA → SA → PM (เจ้าของ 2026-10-05) · คงของเดิม: role prompts, artifact structure, split docs, exact-path reading, ownership, human gates, policies
+
+**REQ-009 ไม่อยู่ R1 (gate 7 — เจ้าของ jtrp98 2026-10-05, AskUserQuestion "ไป release ถัดไป"):** สวิตช์ git commit `gituse` + AC-025…032 เลื่อนไป release ถัดไป
+
 **ไม่อยู่ใน release นี้** (ไป `..\backlog.md` เมื่อ PM เปิด module นี้): แจ้ง gate ผ่าน Telegram/LINE/Email, เจ้าของ gate หลายคนพร้อมช่องทางติดต่อจริง (config รองรับแล้ว แต่ไม่กรอกตัวจริง), camp เพิ่มนอกจาก 3 ตัว (เช่น opencode/zai ตามของเดิม), รายงานต้นทุน/โควตาต่อ camp, รันต่างเครื่อง/บน server, self-learning/memory ของ CAO
 
 ## Constraints & Assumptions
@@ -35,11 +39,12 @@
 - release นี้ไม่มี external API key ที่ต้องจัดการ (Gemini ถูกตัดทั้งหมด — OQ-1) — ผู้ใช้ 2026-10-04
 - ตัวขับ pipeline **เขียนเอง** รัน Windows native โดยตรง (ไม่พึ่ง CAO/WSL/tmux) — ตัดสินโดย ผู้ใช้ 2026-10-04 (OQ-3)
 - แนวคิด tier รวมทั้ง "T1 reserved", role defaults, precedence (override → tier → role default) ดึงจาก `software-team-agents\model-tiers.yaml` + `docs\tier-and-effort-run.md` — ผู้ใช้ (แนวคิด)
-- กติกา pipeline และ finish rules ของ sta2 (`CLAUDE.md`) ยังใช้กับทีมนี้เหมือนเดิม — ผู้ใช้
+- กติกา pipeline และ finish rules ของ sta2 (`CLAUDE.md`) ยังใช้กับทีมนี้เหมือนเดิม — ผู้ใช้ · **แก้ 2026-10-05 (เจ้าของ jtrp98):** ยกเว้นใน orchestrated mode — (ก) เดินทีละ stage / "main session is the pipeline driver" → รัน task ที่ runnable พร้อมกัน และ orchestrator เป็นเจ้าของ runtime state (REQ-013, REQ-020) (ข) ตาราง task `id|status` → `Task|Name|Owner|Phase|Depends|Status` และไม่มี Status ใน task file (REQ-011) (ค) reviewer/QA เป็น clean session แบบ batch ต่อ wave/round (REQ-015, REQ-016) (ง) คอลัมน์ Status เขียนโดย orchestrator จาก verdict ของ qa-engineer (REQ-011, OQ-14) · finish rules, human gates 7 จุด (OQ-19) และ max two fix rounds คงเดิม (retry limit = 2 ตัวนับเดียวต่อ task — OQ-11) · solo mode คง serial และ qa-engineer เขียน Status เอง (OQ-17) · ตัวเลข config ตั้งต้น (เพดาน parallel 3, restart อัตโนมัติ 1, wave ≤ 4 task / 800 บรรทัด, task ใหญ่ > 400 บรรทัดหรือ > 10 ไฟล์) — สมมติฐาน — ยังไม่ยืนยัน
+- R1 ใช้กติกา No state-changing git เดิม: AI/role ใด commit ไม่ได้ ทุก root (อ่าน git ได้) — สวิตช์ REQ-009 ยังไม่มีผลใน R1 — เจ้าของ (jtrp98) 2026-10-05
+- หลักการ R1: Session = working memory ชั่วคราว · Artifact = project memory · Orchestrator state = runtime state — เจ้าของ (jtrp98) 2026-10-05 (REQ-010)
 - CLI ทั้งสามติดตั้งแล้วบนเครื่องนี้ (ตรวจแล้ว 2026-10-04): claude 2.1.287, codex-cli 0.160.0, agy 1.2.16
 - ชื่อ model ฝั่ง google ตรวจครบจาก `agy models` แล้ว; ฝั่ง codex ยืนยัน default `gpt-6.1-sol` จาก `~/.codex/config.toml` — catalog อื่นของ codex ยังไม่เปิดดู แก้ที่ config ได้ภายหลัง
 - solo mode ใช้ไฟล์ชุดเดียวกับ orchestrated mode (role prompts ใน sta2, templates, policies, ตาราง tier) — ห้ามแตกสำเนาสองชุด — ผู้ใช้ (2026-10-04)
-- วันที่ทั้งหมดในเอกสารนี้อ้างจากวันที่ระบบของเซสชัน (2026-10-04) ไม่ได้มาจากปฏิทินของผู้ใช้
 
 ## Declined / Not Pursuing
 
@@ -60,4 +65,4 @@
 
 ## Change Log
 
-- 2026-10-05 — สร้างไฟล์ — ย้าย section module-level ทั้งหมด (Overview, Target Users & Roles, Release Scope, Constraints & Assumptions, Declined / Not Pursuing, References) จาก `..\index.md` verbatim ตาม DES-014 ฉบับปรับปรุง 2026-10-05 (module index เป็นสารบัญล้วน)
+- 2026-10-05 — คุมงบ รอบ 2: Change Log เดิม + หมายเหตุประวัติ (OQ-10…19 ปิด, บันทึก REQ-009 เดิม, หมายเหตุวันที่ระบบ) verbatim → `archive.md` §scope.md (รอบ 2)

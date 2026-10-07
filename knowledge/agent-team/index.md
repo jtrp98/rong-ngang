@@ -7,11 +7,11 @@
 
 | ไฟล์ | เนื้อหา | สถานะ |
 |---|---|---|
-| `requirement\index.md` | สารบัญ requirement — ตาราง REQ-001…009 + scope.md + สถานะ + AC | พร้อม |
+| `requirement\index.md` | สารบัญ requirement — ตาราง REQ-001…021 + scope.md + สถานะ + AC | พร้อม |
 | `requirement\scope.md` | เนื้อหา module-level: Overview · Target Users & Roles · Release Scope · Constraints & Assumptions · Declined / Not Pursuing · References | พร้อม |
 | `design\index.md` | สารบัญ design — Feasibility + ตาราง DES + ไฟล์ย่อย | พร้อม |
 | `plan\index.md` | สารบัญ plan — release scope, phase, task ต่อไฟล์ | พร้อม |
-| `open-questions\index.md` | สารบัญ OQ ทั้ง 14 — ไฟล์รายตัว oq-1…9, oq-d1…d5 (ปิดครบแล้ว) | พร้อม |
+| `open-questions\index.md` | สารบัญ OQ ทั้ง 25 — ไฟล์รายตัว oq-1…20, oq-d1…d5 (ปิดครบ) | พร้อม |
 | `backlog.md` | งานที่ทำทีหลัง (append-only) | พร้อม |
 
 ## Change Log
@@ -25,3 +25,8 @@
 - 2026-10-05 — ตาม DES-014 ฉบับปรับปรุง 2026-10-05: index นี้เหลือสารบัญล้วน — ย้ายเนื้อหา module-level (Overview, Target Users & Roles, Release Scope, Constraints & Assumptions, Declined / Not Pursuing, References) ไป `requirement\scope.md` verbatim · แตก OQ เป็นไฟล์รายตัว `open-questions\oq-1…6.md` + `oq-d1…d5.md` · หัว budget ของ index ทุกตัวเป็นสูตรใหม่ (median × 0.75 × จำนวนไฟล์ + 2 KB)
 - 2026-10-05 — git: เพิ่ม REQ-009 (สวิตช์ git commit ต่อ knowledge + override ต่อ target ใน sta-config, สลับด้วย `/gituse`, default เปิด, มีผล run ถัดไป, อ่าน git ได้เสมอ) จากคำตอบเจ้าของใน OQ-7 · ค้าง OQ-8, OQ-9
 - 2026-10-05 — ปิด OQ-7/8/9 → REQ-009 confirmed: สวิตช์ = permission ให้ AI commit อย่างเดียว (ห้าม push/branch/merge), ปิด = กติกา no state-changing git เดิม, non-git root เตือน+ข้าม, `/gituse` เป็น slash command ใน solo mode, ตัด `git.remote`/ตรวจ origin
+- 2026-10-05 — spec refactor session/orchestration ของเจ้าของ (jtrp98) เข้า R1 (gate 7 ยืนยันโดยผู้ใช้ 2026-10-05, route BA → SA → PM): เพิ่ม REQ-010…021 (AC-033…071), amend REQ-001/003/006 (+AC-072)/008, แก้ Release Scope + Constraints ใน `requirement\scope.md` · เปิด OQ-10…19
+- 2026-10-05 — เจ้าของเปลี่ยนชื่อ owner เป็น `jtrp98` (ชื่อ git) ตามคำสั่งเจ้าของ: แก้ทุกเอกสารและ `gates.yaml` `owner_default` + test · คงชื่อเดิม `jabja` verbatim ใน `open-questions\oq-d5.md`, `design\archive.md`, `design\index.md` Change Log (ประวัติ)
+- 2026-10-05 — ปิด OQ-10…19: เจ้าของ (jtrp98) เลือกตัวเลือกตามข้อเสนอของ BA ทุกข้อ → amend REQ-003/006/008/011/012/013/015/017/018/020/021 + `requirement\scope.md` · เพิ่ม AC-073…078 · ตัวเลข config ตั้งต้นยังเป็นสมมติฐาน
+- 2026-10-05 — gate 7: เจ้าของ (jtrp98) เลื่อน REQ-009 (สวิตช์ git `gituse`, AC-025…032) ไป release ถัดไป — R1 ใช้กติกา no state-changing git เดิม · แก้ `requirement\index.md`, `requirement\scope.md`, `requirement\req-009.md` · เปิด OQ-20 (task Owner reviewer/security ใน orchestrated mode) รอเจ้าของ
+- 2026-10-05 — ปิด OQ-20: เจ้าของ (jtrp98) เลือกข้อ (ก) ตามข้อเสนอของ BA — task ใน plan ห้าม Owner reviewer/security (review มาจาก wave, security = stage ท้าย phase 🔒) → REQ-011 (+AC-079), REQ-012, REQ-015 (+AC-080), REQ-021

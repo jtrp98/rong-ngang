@@ -55,7 +55,15 @@ test("ค่าตั้งต้นตรง data-model.md ทุก field", ()
   assert.equal(c.registry.rolePromptRoot, path.join(c.registry.packRoot, ".claude", "agents"));
   assert.equal(c.registry.templatesRoot, path.join(c.registry.packRoot, "templates"));
   assert.deepEqual(c.registry.ui, { host: "127.0.0.1", port: 7800, openBrowser: true });
-  assert.deepEqual(c.registry.concurrency, { maxConcurrentRuns: 1, maxConcurrentStages: 1 });
+  assert.deepEqual(c.registry.scheduler, {
+    maxParallelSessions: 3,
+    fixRoundLimit: 2,
+    crashRestartLimit: 1,
+    reviewWave: { maxTasks: 4, maxDiffLines: 800 },
+    largeTask: { diffLines: 400, files: 10 },
+  });
+  assert.deepEqual(c.registry.audit, { manifestIgnore: ["node_modules/**", ".git/**"], preimageMaxMB: 50 });
+  assert.equal("concurrency" in c.registry, false);
 
   assert.equal(c.routing.defaultCamp, "claude");
   for (const role of KNOWN_ROLES) {
@@ -125,7 +133,7 @@ test("ค่าตั้งต้นตรง data-model.md ทุก field", ()
   assert.equal(ag.extraDirsFlag, "--add-dir");
   assert.equal(ag.logFlag, "--log-file");
 
-  assert.deepEqual(c.gates.owner_default, { name: "jabja" });
+  assert.deepEqual(c.gates.owner_default, { name: "jtrp98" });
   assert.deepEqual(c.gates.channels, []);
   const expectGates: Record<string, [number, string]> = {
     "business-choice": [1, "handoff"], "schema-breaking": [2, "handoff"], "ux-signoff": [3, "structural"],
@@ -170,6 +178,16 @@ test("ไฟล์เสีย → ConfigError ระบุ path (fail-closed): 
     ["gates.yaml", (s) => writeFileSync(s.cfg("gates.yaml"), readFileSync(s.cfg("gates.yaml"), "utf8").replace("staGate: 7", "staGate: 9")), /staGate/],
     ["tiers.yaml", (s) => writeFileSync(s.cfg("tiers.yaml"), readFileSync(s.cfg("tiers.yaml"), "utf8").replace("business-analyst: T3", "business-analyst: T1")), /T1/],
     ["camps.yaml", (s) => writeFileSync(s.cfg("camps.yaml"), readFileSync(s.cfg("camps.yaml"), "utf8").replace('"dontAsk"]', '"dontAsk", "--dangerously-skip-permissions"]')), /dangerously/],
+    ["camps.yaml", (s) => writeFileSync(s.cfg("camps.yaml"), readFileSync(s.cfg("camps.yaml"), "utf8").replace('"dontAsk"]', '"dontAsk", "--continue"]')), /--continue/],
+    ["camps.yaml", (s) => writeFileSync(s.cfg("camps.yaml"), readFileSync(s.cfg("camps.yaml"), "utf8").replace('"dontAsk"]', '"dontAsk", "--resume"]')), /--resume/],
+    ["camps.yaml", (s) => writeFileSync(s.cfg("camps.yaml"), readFileSync(s.cfg("camps.yaml"), "utf8").replace('"dontAsk"]', '"dontAsk", "resume"]')), /resume/],
+    ["registry.yaml", (s) => writeFileSync(s.cfg("registry.yaml"), readFileSync(s.cfg("registry.yaml"), "utf8") + "concurrency:\n  maxConcurrentRuns: 1\n"), /concurrency/],
+    ["registry.yaml", (s) => writeFileSync(s.cfg("registry.yaml"), readFileSync(s.cfg("registry.yaml"), "utf8").replace(/^scheduler:[\s\S]*?(?=^audit:)/m, "")), /scheduler/],
+    ["registry.yaml", (s) => writeFileSync(s.cfg("registry.yaml"), readFileSync(s.cfg("registry.yaml"), "utf8").replace(/^audit:[\s\S]*$/m, "")), /audit/],
+    ["registry.yaml", (s) => writeFileSync(s.cfg("registry.yaml"), readFileSync(s.cfg("registry.yaml"), "utf8").replace("maxParallelSessions: 3", "maxParallelSessions: 0")), /maxParallelSessions/],
+    ["registry.yaml", (s) => writeFileSync(s.cfg("registry.yaml"), readFileSync(s.cfg("registry.yaml"), "utf8").replace("maxTasks: 4", "maxTasks: 0")), /maxTasks/],
+    ["registry.yaml", (s) => writeFileSync(s.cfg("registry.yaml"), readFileSync(s.cfg("registry.yaml"), "utf8").replace("preimageMaxMB: 50", "preimageMaxMB: -1")), /preimageMaxMB/],
+    ["registry.yaml", (s) => writeFileSync(s.cfg("registry.yaml"), readFileSync(s.cfg("registry.yaml"), "utf8").replace("crashRestartLimit: 1", "crashRestartLimit: 1.5")), /crashRestartLimit/],
   ];
   for (const [file, mutate, re] of cases) {
     const s = sandbox();

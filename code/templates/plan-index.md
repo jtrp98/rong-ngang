@@ -1,6 +1,6 @@
 # <ชื่อ module> — Plan Index
 
-> หน่วยอ่าน = ไฟล์ · Budget(index) = (median ขนาดไฟล์ย่อยที่ระบุ × 0.75) × จำนวนไฟล์ + 2 KB (`policies\documentation.md` §4) · เขียนโดย `project-manager` — **คอลัมน์ Status ในตาราง Tasks ให้ `qa-engineer` เขียนเท่านั้น** (`pending` ตั้งโดย PM · `verified`/`blocked` โดย qa) · 1 แถว = 1 บรรทัด
+> หน่วยอ่าน = ไฟล์ · Budget(index) = (median ขนาดไฟล์ย่อยที่ระบุ × 0.75) × จำนวนไฟล์ + 2 KB (`policies\documentation.md` §4) · เขียนโดย `project-manager` — **ผู้เขียนคอลัมน์ Status ตามโหมด:** PM = แถวใหม่ `pending` · orchestrated = orchestrator คัดลอกจาก verdict ของ `qa-engineer` · solo = `qa-engineer` เขียนเอง · ค่า `pending`/`verified`/`blocked` เท่านั้น · Depends อยู่ที่ตารางนี้แหล่งเดียว · 1 แถว = 1 บรรทัด
 > วิธีอ่าน: อ่านไฟล์นี้ก่อน แล้วเปิดเฉพาะ `<task-id>.md` ที่ packet/brief ระบุ — ตาราง Tasks ด้านล่างคือแหล่งสถานะเดียว
 
 ## Release Scope
@@ -23,9 +23,9 @@
 
 ## Tasks
 
-| Task | ชื่อ | Owner | Phase | Status |
-|---|---|---|---|---|
-| BE-001 | <ชื่อ> | backend-engineer | 1 | pending |
+| Task | Name | Owner | Phase | Depends | Status |
+|---|---|---|---|---|---|
+| BE-001 | <ชื่อ> | backend-engineer | 1 | — | pending |
 
 ## Sequencing Notes
 

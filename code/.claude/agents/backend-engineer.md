@@ -34,7 +34,11 @@ Then the real code you'll touch **and its neighbours**.
 
 ## Stop and route
 
-You have no `AskUserQuestion` on purpose. If behaviour, permission, an error case, or the data model is unclear or the docs disagree — stop that part and route it to `system-analyst`, stating the task, the conflict, and the decision needed. Continue only unblocked work. A security fix stays "fix claimed" until `security` re-audits it.
+You have no `AskUserQuestion` on purpose. If behaviour, permission, an error case, or the data model is unclear or the docs disagree — stop that part and finish with `NEEDS_DESIGN_CHANGE` / `NEEDS_REQUIREMENT_CHANGE` (Task, Reference, Reason) or `NEEDS_HUMAN`. Continue only unblocked work. A security fix stays "fix claimed" until `security` re-audits it.
+
+## Output state and blocker
+
+Finish with exactly one output state: `DONE` · `BLOCKED` · `NEEDS_DESIGN_CHANGE` · `NEEDS_REQUIREMENT_CHANGE` · `NEEDS_HUMAN` (the full set is 7 values with `PASS`/`FAIL`, which are reviewer/QA states, not yours). Blocker shape: `NEEDS_DESIGN_CHANGE` (reference = DES-id) or `NEEDS_REQUIREMENT_CHANGE` (reference = REQ/AC-id), each with **Task / Reference / Reason**; plain `BLOCKED` only for environment, dependency, access, or other. `NEEDS_HUMAN` carries the exact question. You never edit design or requirement yourself, and you write only the task's `Write paths` (from its `## Scope`).
 
 ## Handoff
 

@@ -36,8 +36,8 @@ Writer ต่อไฟล์/โฟลเดอร์ — เขียนได�
 | `design\data-model.md` | system-analyst | schema contract — qa อ่านเต็มทุกรอบ |
 | `design\des-NNN.md` | system-analyst | 1 contract ต่อ 1 ไฟล์ |
 | `design\modules.md` · `quality-attributes.md` · `risks.md` · `archive.md` | system-analyst | กลุ่ม feature · quality attributes · risks · ของที่ปิดแล้ว verbatim |
-| `plan\index.md` | project-manager (**คอลัมน์ Status: qa-engineer เท่านั้น**) | Release Scope · Waiting on Human · phases · ตาราง task: id\|status |
-| `plan\<task-id>.md` | project-manager | 1 task ต่อ 1 ไฟล์ |
+| `plan\index.md` | project-manager (**คอลัมน์ Status: ผู้เขียนตามโหมด — §3**) | Release Scope · Waiting on Human · phases · ตาราง `Task\|Name\|Owner\|Phase\|Depends\|Status` (6 คอลัมน์) |
+| `plan\<task-id>.md` | project-manager | 1 task ต่อ 1 ไฟล์ · 8 หัวข้อ (Goal/References/Scope/Out of Scope/Expected Output/Acceptance/Dependencies/Handoff) · ไม่มี Status |
 | `test-plan\*` | test-planner | shared test strategy (trigger-based) |
 | `uxui\UX-NNN-*.md` | uxui-designer (sign-off: คน) | UX drafts |
 | `review\round-N.md` | reviewer | findings + verdict ต่อรอบ |
@@ -59,7 +59,7 @@ Once a file exists you amend it:
 
 - `Edit` only the sub-file your change affects. Never `Write` over an existing file — that destroys other roles' work and history.
 - Append a dated line to the `## Change Log` of the file you touched; don't rewrite existing entries (moving them to an archive is allowed, §4).
-- Status lives at the index, single-writer: `plan\index.md`'s Status column — `project-manager` writes `pending`; only `qa-engineer` writes `verified` or `blocked`. Engineers report progress in their handoff and never edit `plan\index.md`. REQ status lives in `requirement\index.md` (BA).
+- Status lives at the index, single-writer: `plan\index.md`'s Status column — `project-manager` writes new rows as `pending`; `verified`/`blocked` come from `qa-engineer`'s verdict, and the writer depends on the mode: **orchestrated** = the orchestrator copies the Status from the qa-engineer verdict (the agent itself does not write the column); **solo** = `qa-engineer` writes it directly. No other role writes it. Engineers report progress in their handoff and never edit `plan\index.md`. REQ status lives in `requirement\index.md` (BA).
 - `qa-engineer` may add a `🔒 Security gate` to a phase in `plan\index.md`, never remove one.
 - Because status files are small and separate, the post-run write audit reads the whole diff and can enforce single-writer for real — a violation stops the run.
 

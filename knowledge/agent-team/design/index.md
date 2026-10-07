@@ -1,6 +1,6 @@
 # agent-team — Design
 
-> หน่วยอ่าน = ไฟล์ · Budget ต่อหน่วย (DES-014): des ≤ 8 KB · data-model ≤ 15 KB · index ใช้สูตร `(median ขนาดไฟล์ย่อย × 0.75) × จำนวนไฟล์ + 2 KB` — index นี้ระบุ 22 ไฟล์ (des-001…017 + data-model, quality-attributes, modules, risks, archive) median ~4.6 KB (ประมาณ — ยังไม่วัดครบ) → budget ≈ 4.6×0.75×22+2 ≈ 77.9 KB · actual 15,935 B (driver วัด 2026-10-05) ✓ — ต่อให้ median ต่ำเพียง 1 KB budget ยัง ≈ 18.5 KB ≥ actual · 1 แถว = 1 บรรทัด · เขียนโดย `system-analyst` เท่านั้น
+> หน่วยอ่าน = ไฟล์ · Budget ต่อหน่วย (DES-014): des ≤ 8 KB · data-model ≤ 15 KB · index ใช้สูตร `(median ขนาดไฟล์ย่อย × 0.75) × จำนวนไฟล์ + 2 KB` — index นี้ระบุ 27 ไฟล์ (des-001…022 + data-model, quality-attributes, modules, risks, archive) median ~4.6 KB (ประมาณ — ยังไม่วัดครบ) → budget ≈ 4.6×0.75×27+2 ≈ 95.2 KB · actual หลัง Rev 10 ยังไม่วัด (SA ไม่มี shell — ก่อน Rev 10 = 15,935 B) — ต่อให้ median 1.5 KB budget ≈ 32 KB · 1 แถว = 1 บรรทัด · เขียนโดย `system-analyst` เท่านั้น
 
 **วิธีอ่าน:** packet `readSections` เป็น path ตรง — อ่าน index หมวดที่ถูกชี้ก่อน แล้วอ่านเฉพาะไฟล์ที่ packet ระบุเท่านั้น · ห้าม ls ห้ามอ่านข้ามหมวด (grep ในไฟล์ที่ได้รับอนุญาตทำได้) · ตาราง DES ด้านล่างคือรายชื่อไฟล์ contract ทั้งหมด (DES-014) · ไฟล์เก่า `design.md`/`design-archive.md` กลายเป็นโครงนี้ตั้งแต่ Rev 7
 
@@ -20,37 +20,54 @@
 | REQ-006 human gate 7 จุด ผูกเจ้าของ | ทำได้ทันทีในขอบเขต release | gate เป็น state ของ orchestrator ไม่ใช่พฤติกรรม agent: driver หยุด dispatch ก่อนข้าม gate (DES-008) — ตอบ AC-013 แบบ deterministic; เจ้าของต่อ gate จาก `config/gates.yaml`; แจ้งผ่าน dashboard + terminal (ช่องทางภายนอกอยู่นอก scope ตาม requirement §Scope) |
 | REQ-007 งานใหม่ส่งตรงถึง BA | ทำได้ทันที | ข้อความดิบส่งเป็น dispatch packet ตรงถึง business-analyst โดยไม่มีชั้นจัดหมวด (DES-010); ผลตัดสินของ BA อ่านจาก machine handoff ของ BA เอง (DES-012) แสดงบน UI; จากนั้น driver เดินตาม plan/process เดิม |
 | REQ-008 solo mode (manual pipeline ใน coding agent session) | ทำได้ทันที | sta2 ทำแบบนี้อยู่แล้ว (`sta2\CLAUDE.md` — main session เป็น pipeline driver, gate 7 จุด, finish rules) และโปรเจกต์นี้ถูกขับแบบ solo ตลอด (BA/SA สวมบทใน session เดียว, 2026-10-04) — ใช้ pack ชุดเดียวกับ orchestrated ไม่เพิ่มโค้ด; รองรับ 4 agents (AC-024): claude/zcode อ่าน `.claude\agents\*.md` + `CLAUDE.md` ตรง (sta2 ใช้จริง) · codex — `~\.codex\AGENTS.md` มีจริง (`inferred`) · antigravity — `agy --help` ไม่พบ convention → `AGENTS.md` ที่ `code\` (packRoot) เป็นจุดเข้ากลาง (`inferred`) — จุดเข้าเป็น task ของ setup role (SETUP-003) — DES-013 |
-| REQ-009 สวิตช์ git commit (`gituse`) | ทำได้ — ต้องแก้ pack | resolve/validate/freeze ใน config layer (DES-015) · บังคับ 3 ชั้น: กันก่อนได้เฉพาะ claude (`--disallowedTools`), codex/agy = บรีฟ + ref audit หลัง stage (DES-016, DES-006) · `code\.claude\settings.json:5-6,24-25` deny `git add`/`git commit` แบบ static → ต้องถอดออก ไม่งั้นสวิตช์เปิดไม่มีผลใน claude/zcode · `/gituse` = slash command ใน pack (DES-017, รูปไฟล์ต่อ agent `inferred`) · audit ใช้ git เพราะ rong-ngang เป็น repo (`.git\HEAD:1`) |
+| REQ-009 สวิตช์ git commit (`gituse`) | **ไม่อยู่ R1 — เลื่อนไป release ถัดไป** (เจ้าของ jtrp98 2026-10-05; R1 = no state-changing git, `commitAllowed: false` — DES-015, เจ้าของยืนยัน) · ทำได้ — ต้องแก้ pack | resolve/validate/freeze ใน config layer (DES-015) · บังคับ 3 ชั้น: กันก่อนได้เฉพาะ claude (`--disallowedTools`), codex/agy = บรีฟ + ref audit หลัง stage (DES-016, DES-006) · `code\.claude\settings.json:5-6,24-25` deny `git add`/`git commit` แบบ static → ต้องถอดออก ไม่งั้นสวิตช์เปิดไม่มีผลใน claude/zcode · `/gituse` = slash command ใน pack (DES-017, รูปไฟล์ต่อ agent `inferred`) · audit ใช้ git เพราะ rong-ngang เป็น repo (`.git\HEAD:1`) |
+| REQ-010 artifact = ความจำ (stateless session) | ทำได้ทันที | ทุก dispatch = process ใหม่ ไม่มี `--continue/--resume` (config.ts ปฏิเสธ) + packet มีแต่ artifact (DES-012/020); runtime state แยกใน `state\` (DES-007) |
+| REQ-011 plan = work graph (6 คอลัมน์) | ทำได้ — ต้องแก้ pack + validator | parse header/Depends/Status (DES-014, DES-001) · template `code\templates\plan-index.md:26-28` 5 คอลัมน์ + `plan-task.md:5` มี Status → งาน setup · legacy อ่านได้ dispatch ทีละตัว + ธง · Status write-back ของ orchestrator (DES-007) |
+| REQ-012 1 task = 1 session | ทำได้ทันที | packet ต่อ scope + sessionId ใหม่ทุก dispatch, session group ตรวจเชิงกลไก (DES-001) |
+| REQ-013 parallel + unlock ตาม verified | ทำได้ — เปลี่ยน design (gate 2 ยืนยันแล้ว 2026-10-05) | ถอด `maxConcurrentStages: 1` → `scheduler.maxParallelSessions` (ชน `config.ts:330-335` ที่ build แล้ว) · audit ต่อ session ด้วย path claim (DES-021 — ทางเลือก B เจ้าของเลือก) · parallel engineer ต้องมี `Write paths` ใน task |
+| REQ-014 minimum context ด้วย ID | ทำได้ทันที | contextLoader resolve ผ่าน index ของหมวด (DES-020); ต้องเพิ่มตาราง TP/REV/QA ใน index (template — setup) |
+| REQ-015 reviewer wave | ทำได้ | wave ตัดสินด้วย code (DES-019); security = stage ท้าย phase 🔒 หลัง Feature QA PASS ไม่ใช่ task (R19/R21, AC-080 — gate คง 7); diff ต่อ task ด้วย pre-image + `git diff --no-index` (ต้องมี git binary — Git Bash, scope.md:35) |
+| REQ-016 QA round + defect packet | ทำได้ | batch ต่อ phase + quiesce codeRoot ก่อน shared checks (DES-019); defect packet จาก handoff-v2 |
+| REQ-017 Feature QA ต่อ phase | ทำได้ทันที | R18–R20 (DES-018/019) · task Owner qa-engineer = anchor ของ `feature-qa` (DES-019) |
+| REQ-018 TP-NNN | ทำได้ — partial AC-060 | TP ใน `test-plan\` + ตาราง TP ใน index (DES-019/020) · "ไม่รัน check" กันก่อนได้เฉพาะ claude (`--disallowedTools Bash`), codex/agy ตรวจหลังได้ไม่ครบ (DES-021) |
+| REQ-019 blocker design/requirement | ทำได้ทันที | NEEDS_DESIGN_CHANGE/NEEDS_REQUIREMENT_CHANGE + change chain SA/BA → PM → impactedTasks (DES-018 R10–R13) |
+| REQ-020 orchestrator = runtime state | ทำได้ — kill orphan `inferred` | TaskRuntime/SessionRecord (DES-007, data-model) · restart 1 ครั้ง + `taskkill /T` (ยังไม่ทดสอบ) |
+| REQ-021 deterministic router | ทำได้ทันที | pure function ตาราง R1–R24 + `router.log` (DES-018) · R24 = แถว Owner reviewer/security (AC-079) |
 
-สรุป: ทุก REQ ทำได้ทันที ไม่มีรายการ "ทำไม่ได้" และไม่ต้องเปลี่ยน requirement ใด — ข้อเสนอทางเทคนิคทั้งหมดเป็น additive ต่อ sta2 (ไม่แตะไฟล์ sta2 เลย นอกจากอ่าน) · ปรับปรุง 2026-10-05: packRoot = `code\` (pack เป็น asset ของสินค้า), layout เป็น split (DES-014), knowledge/target ผูกด้วย sta-config.json (DES-015) · ปรับปรุง 2026-10-05 (Rev 9): REQ-009 ทำได้แต่ต้องแก้ pack ที่ `code\` (settings.json deny + hard rule git ใน `CLAUDE.md` + `/gituse`)
+สรุป: ทุก REQ ทำได้ทันที ไม่มีรายการ "ทำไม่ได้" และไม่ต้องเปลี่ยน requirement ใด — ข้อเสนอทางเทคนิคทั้งหมดเป็น additive ต่อ sta2 (ไม่แตะไฟล์ sta2 เลย นอกจากอ่าน) · ปรับปรุง 2026-10-05: packRoot = `code\` (pack เป็น asset ของสินค้า), layout เป็น split (DES-014), knowledge/target ผูกด้วย sta-config.json (DES-015) · ปรับปรุง 2026-10-05 (Rev 9): REQ-009 ทำได้แต่ต้องแก้ pack ที่ `code\` (settings.json deny + hard rule git ใน `CLAUDE.md` + `/gituse`) · **Rev 10 (2026-10-05):** REQ-010…021 ทำได้ทั้งหมด ไม่มี "ทำไม่ได้" — แต่ REQ-013 ต้องเปลี่ยน contract ที่ build แล้วบางส่วน (gate 2) และ REQ-011/014/018 ต้องแก้ template/prompt ใน pack (setup) · REQ-003 (ข้อยกเว้น Status), REQ-006 (gate scope ต่อ task, AC-078), REQ-008 (solo serial) → DES-006/007/008/013 · Impact on built code → `## Impact on built code`
 
 ## Design Contracts
 
 | ID | ชื่อ | Traces | ไฟล์ |
 |---|---|---|---|
-| DES-001 | Pipeline driver และ stage state machine | REQ-001 (AC-003), REQ-002, REQ-007 (AC-019) | `des-001.md` |
-| DES-002 | Camp adapters: headless spawn ต่อ camp | REQ-002 (AC-004, AC-005) | `des-002.md` |
+| DES-001 | Pipeline driver และ DAG scheduler (session lifecycle) | REQ-001 (AC-003), REQ-002, REQ-007 (AC-019), REQ-011 (AC-036, AC-037, AC-039, AC-074, AC-079), REQ-015 (AC-080), REQ-012 (AC-040–042), REQ-013 (AC-043–045), REQ-020 (AC-067) | `des-001.md` |
+| DES-002 | Camp adapters: headless spawn ต่อ camp | REQ-002 (AC-004, AC-005), REQ-010 (AC-033) | `des-002.md` |
 | DES-003 | Role prompt แหล่งเดียว และวิธีแนบต่อ dispatch | REQ-003 (AC-006, AC-007), REQ-005 (AC-012) | `des-003.md` |
 | DES-004 | Tier engine (port จาก orchestrator เดิม) | REQ-004 (AC-008, AC-009, AC-010) | `des-004.md` |
 | DES-005 | Role routing (role → camp) | REQ-002 (AC-004, AC-005), REQ-006 (AC-015) | `des-005.md` |
-| DES-006 | Write scope ต่อ role + post-run write audit | REQ-003 (AC-007), REQ-005 (AC-011, AC-012), REQ-009 (AC-026, AC-027, AC-030) | `des-006.md` |
-| DES-007 | Run state store และการ resume | REQ-001 (AC-002, AC-003), REQ-006 (AC-013) | `des-007.md` |
-| DES-008 | Human gate enforcement (7 จุด) | REQ-006 (AC-013, AC-014, AC-015, AC-016) | `des-008.md` |
-| DES-009 | Web UI และ local API server | REQ-001 (AC-001, AC-002, AC-003), REQ-006 (AC-014), REQ-007 (AC-017, AC-018), REQ-009 (AC-029, AC-031, AC-032) | `des-009.md` |
+| DES-006 | Write scope ต่อ role + post-run write audit | REQ-003 (AC-007), REQ-005 (AC-011, AC-012), REQ-009 (AC-026, AC-027, AC-030 — ไม่อยู่ R1), REQ-011 (AC-073), REQ-015 (AC-052), REQ-018 (AC-060) | `des-006.md` |
+| DES-007 | Runtime state ต่อ task, resume, crash restart, Status write-back | REQ-001 (AC-002, AC-003), REQ-006 (AC-013), REQ-010 (AC-034, AC-035), REQ-011 (AC-073), REQ-020 (AC-065, AC-066, AC-067, AC-075) | `des-007.md` |
+| DES-008 | Human gate enforcement (7 จุด) | REQ-006 (AC-013, AC-014, AC-015, AC-016, AC-072, AC-078), REQ-021 (AC-071) | `des-008.md` |
+| DES-009 | Web UI และ local API server | REQ-001 (AC-001, AC-002, AC-003), REQ-006 (AC-014), REQ-007 (AC-017, AC-018), REQ-009 (AC-029, AC-031, AC-032 — ไม่อยู่ R1), REQ-006 (AC-072 — start) | `des-009.md` |
 | DES-010 | งานใหม่ส่งตรงถึง business-analyst | REQ-007 (AC-017, AC-018, AC-019), REQ-001 | `des-010.md` |
 | DES-011 | Knowledge integration (docsRoot, template, amend) | REQ-005 (AC-011, AC-012), REQ-001 (AC-002) | `des-011.md` |
-| DES-012 | Dispatch packet และ machine handoff contract | REQ-002 (AC-004), REQ-003 (AC-006), REQ-006 (AC-014), REQ-007 (AC-018), REQ-009 (AC-027, AC-029, AC-030, AC-031) | `des-012.md` |
-| DES-013 | Solo mode (manual pipeline ใน coding agent session) | REQ-008 (AC-020, AC-021, AC-022, AC-023, AC-024), REQ-009 (ตัวชี้ → DES-016/017) | `des-013.md` |
-| DES-014 | โครงสร้างเอกสาร module (split layout) | REQ-005 (AC-011, AC-012), REQ-003 | `des-014.md` |
-| DES-015 | sta-config.json (machine-local registry) + สวิตช์ `gituse` | REQ-001 (AC-001, AC-002), REQ-002 (AC-004), REQ-009 (AC-025, AC-026, AC-028, AC-029, AC-031, AC-032), DES-011 | `des-015.md` |
-| DES-016 | สิทธิ์ git commit ต่อ root (`gituse`): การบังคับ | REQ-009 (AC-026, AC-027, AC-029, AC-030, AC-031), REQ-008 | `des-016.md` |
-| DES-017 | `/gituse` slash command (solo mode) | REQ-009 (AC-025, AC-028, AC-029), REQ-008 (AC-023, AC-024) | `des-017.md` |
+| DES-012 | Dispatch packet v2 และ handoff-v2 contract | REQ-002 (AC-004), REQ-003 (AC-006), REQ-006 (AC-014), REQ-007 (AC-018), REQ-009 (AC-027, AC-029–031 — ไม่อยู่ R1), REQ-010 (AC-033), REQ-012 (AC-041), REQ-015 (AC-050), REQ-016 (AC-055), REQ-019 (AC-062), REQ-021 (AC-068) | `des-012.md` |
+| DES-013 | Solo mode (manual pipeline ใน coding agent session) | REQ-008 (AC-020–024), REQ-009 (ตัวชี้ → DES-016/017 — ไม่อยู่ R1), REQ-011 (รูปร่วม), REQ-003 (Status ใน solo) | `des-013.md` |
+| DES-014 | โครงสร้างเอกสาร module (split layout + plan v2) | REQ-005 (AC-011, AC-012), REQ-003, REQ-011 (AC-036, AC-038, AC-039, AC-074, AC-079), REQ-008 (AC-021), REQ-018 (AC-059) | `des-014.md` |
+| DES-015 | sta-config.json (machine-local registry) + สวิตช์ `gituse` (ส่วน `gituse` ไม่อยู่ R1 — เลื่อนไป release ถัดไป) | REQ-001 (AC-001, AC-002), REQ-002 (AC-004), REQ-009 (AC-025, AC-026, AC-028, AC-029, AC-031, AC-032), DES-011 | `des-015.md` |
+| DES-016 | สิทธิ์ git commit ต่อ root (`gituse`): การบังคับ — **ไม่อยู่ R1 — เลื่อนไป release ถัดไป** | REQ-009 (AC-026, AC-027, AC-029, AC-030, AC-031), REQ-008 | `des-016.md` |
+| DES-017 | `/gituse` slash command (solo mode) — **ไม่อยู่ R1 — เลื่อนไป release ถัดไป** | REQ-009 (AC-025, AC-028, AC-029), REQ-008 (AC-023, AC-024) | `des-017.md` |
+| DES-018 | Deterministic router: output state → ขั้นถัดไป + retry counter | REQ-021 (AC-068–071, AC-076), REQ-019 (AC-062–064), REQ-016 (AC-055, AC-056), REQ-017 (AC-077), REQ-020 (AC-067, AC-075), REQ-006 (AC-078), REQ-011 (AC-073, AC-079), REQ-015 (AC-080) | `des-018.md` |
+| DES-019 | Review wave · QA round · Feature QA · security stage · defect packet · TP | REQ-015 (AC-049–052, AC-080), REQ-011 (AC-079), REQ-016 (AC-053–056), REQ-017 (AC-057, AC-058, AC-077), REQ-018 (AC-059–061), REQ-012 (AC-040) | `des-019.md` |
+| DES-020 | Minimum context loader (ID → ไฟล์) + context ต่อ role | REQ-014 (AC-046–048), REQ-010 (AC-033, AC-035), REQ-012 (AC-041, AC-042) | `des-020.md` |
+| DES-021 | Write audit ต่อ session (parallel) ด้วย path claim | REQ-013 (AC-043, AC-045), REQ-003 (AC-007), REQ-011 (AC-073), REQ-015 (AC-052), REQ-018 (AC-060), REQ-020 (AC-066) | `des-021.md` |
+| DES-022 | Dashboard ต่อ task (runtime view) + human retry | REQ-020 (AC-065, AC-066), REQ-013 (AC-043, AC-045), REQ-011 (AC-037, AC-074), REQ-006 (AC-014, AC-072), REQ-014 (AC-047), REQ-019 (AC-064), REQ-010 (AC-034) | `des-022.md` |
 
 ## ไฟล์อื่นในหมวดนี้
 
 | ไฟล์ | เนื้อหา |
 |---|---|
-| `data-model.md` | config ทั้ง 5 ไฟล์ (registry/routing/tiers/camps/gates) + sta-config.json machine-local + `gituse` (DES-015), run state + `gitPolicy`, packet, handoff-v1 |
+| `data-model.md` | config ทั้ง 5 ไฟล์ (registry + `scheduler`/`audit`, routing, tiers, camps, gates) + sta-config.json (`gituse`), run.json + `gitPolicy` + TaskRuntime/SessionRecord/GateRecord, PacketV2, HandoffV2 |
 | `quality-attributes.md` | performance, failure modes, observability, deployment, tech debt |
 | `modules.md` | โครง package + port/adapter (+ pack fork ที่ packRoot) |
 | `risks.md` | dependencies + risks (+ index drift) |
@@ -58,7 +75,29 @@
 
 ## Unresolved Open Questions
 
-ทุกข้อปิดแล้ว 2026-10-04 — ดู `archive.md` (OQ-D1…D5) · OQ-D1 superseded โดย DES-014 (2026-10-05) · OQ-7/8/9 (business — BA) ปิดแล้ว → REQ-009 · ค้างฝั่งคน (gate 2): ยืนยันชื่อ/ชนิด field `gituse` และการถอด `git add`/`git commit` ออกจาก `code\.claude\settings.json` (DES-015/016)
+ทุกข้อปิดแล้ว 2026-10-04 — ดู `archive.md` (OQ-D1…D5) · OQ-D1 superseded โดย DES-014 (2026-10-05) · OQ-7/8/9 (business — BA) ปิดแล้ว → REQ-009 · ค้างฝั่งคน (gate 2): ยืนยันชื่อ/ชนิด field `gituse` และการถอด `git add`/`git commit` ออกจาก `code\.claude\settings.json` (DES-015/016) — **เลื่อนพร้อม REQ-009 (ไม่อยู่ R1) ไม่บล็อก R1**
+
+**Rev 11 — ปิดแล้ว (เจ้าของ jtrp98 2026-10-05 ผ่าน AskUserQuestion):** G2-f (gate 2) = **A** — HandoffV2 + `securityGate` (optional, kind qa/feature-qa) · orchestrator เขียน 🔒 ลง `plan\index.md` (เพิ่มอย่างเดียว) → data-model, DES-006/007/012/018 (R23, R19)/019 · ค่า `gitPolicy` R1 (`gituse:false`, `basis:"default"`, `commitAllowed:false` ทุก root, ไม่สร้าง `/gituse`, คง deny `settings.json`) ยืนยัน → DES-015 — คำถาม/คำตอบตรงตัว → `archive.md` §Rev 11 · G2-f
+
+**Rev 10 — ปิดแล้ว (เจ้าของ jtrp98 2026-10-05 ผ่าน AskUserQuestion):** gate 2 G2-a…e ยืนยันทั้งหมด (G2-b = B path claim) · คำถาม BA 4 ข้อ = ใช้ default ที่ design กำหนด (DES-001 Depends ของ uxui/test-planner · R13 `reopen-needed` · PM เพิ่มแถวใหม่ `pending` ได้ · start: OQ-5 เมื่อ run ไม่วิ่ง / AC-072 เมื่อวิ่งอยู่) · risk #14 = build orchestrator แบบ solo ไม่แก้ deny ไม่มีข้อยกเว้น — ตาราง/คำถาม/คำตอบตรงตัว → `archive.md` §Rev 10
+
+## Impact on built code (ให้ PM replan — ตรวจ Glob/Read 2026-10-05)
+
+ที่ build แล้ว: `code\agent-team\src\core\config.ts`, `src\core\docs-validator.ts`, `test\config.test.ts`, `test\skeleton.test.ts`, `config\*.yaml` 5 ไฟล์, `src\main.ts` (stub) — ไม่มี pipeline/state/packet/audit/web
+
+| ที่ | ผลกระทบ | DES |
+|---|---|---|
+| `config.ts:108,315,330-335` + `config\registry.yaml:14-16` + `test\config.test.ts:58` | `concurrency` → `scheduler` + `audit` (validator exact-keys จะปฏิเสธ key ใหม่) — **breaking — gate 2 ยืนยันแล้ว (jtrp98 2026-10-05)** | DES-001, data-model |
+| `config.ts:40` `FORBIDDEN_ARGS` | เพิ่ม `--continue`, `--resume` + ห้าม codex `subcommand: resume` | DES-002/020 |
+| `config.ts:87` `retryOnCrash` | ชื่อ/ชนิดเดิม ความหมายแคบลง (spawn fail) — ไม่ต้องแก้โค้ด แก้ comment `camps.yaml:3` | DES-007 |
+| `docs-validator.ts:22-30` | เพิ่ม: header plan v2/legacy, task file `Status:`/8 หัวข้อ (AC-038), Depends id/วงวน (AC-039), ค่า Status, ตาราง TP/REV/QA ใน index | DES-014 |
+| `config.ts:555,574` (sta-config exact keys ไม่มี `gituse`) | ไม่ใช่ผลจาก Rev 10 — REQ-009 ยังไม่ build (สังเกตเพิ่ม) · **R1 คงไว้** (REQ-009 ไม่อยู่ R1 — ปฏิเสธ `gituse` = fail-closed) | DES-015 |
+| pack ที่ `code\` — Rev 11 (งาน setup) | severity REV → Critical\|Important\|Minor: `templates\review-round.md:7,11`, `.claude\agents\reviewer.md:32-35,42,49` · รูป `qa:`/`review:`/`test-plan:` เมื่ออ้าง finding/TP ที่ชน task id (template qa/review + prompt PM/reviewer/qa-engineer) · `qa-engineer.md:27,47` → ใช้ `securityGate[]` ใน handoff แทน workaround `questionsForHuman`+`NEEDS_HUMAN` (G2-f A) · REQ-009 ไม่อยู่ R1 → **ไม่**ถอด deny `settings.json`, ไม่สร้าง `/gituse` | DES-018/019/020, DES-016/017 |
+| pack ที่ `code\` (งาน setup) | `templates\plan-index.md` (บรรทัด 26-28 ตาราง 5 คอลัมน์ไม่มี Depends · บรรทัด 3 "Status ให้ qa-engineer เขียนเท่านั้น") · `templates\plan-task.md` (บรรทัด 5 `**Status:** pending` + หัวข้อไม่ตรง 8 ข้อ) · template test-plan/review/qa (TP/REV/QA + ตารางใน index) · role prompts qa-engineer (Status ตามโหมด), reviewer (REV structured), project-manager (Depends/Write paths/flags), engineers (output state + blocker), test-planner (TP) · `policies\documentation.md` §1 + §3 · `CLAUDE.md` (โครง plan + ข้อยกเว้น orchestrated) | DES-014 |
+| pack + plan — Rev 12 (OQ-20) | `project-manager.md` ห้าม Owner `reviewer`/`security` + anchor qa-engineer ≤ 1 ต่อ phase (ตรง design แล้ว — REV-012 ปิดฝั่ง anchor) + dependents ของ anchor = งานหลัง Feature QA · plan Phase 6 มี anchor 2 ตัว (QA-001, QA-002) → R24 hold — PM replan · task BE-018 (validator AC-079/anchor), BE-019 (R1–R22 → R1–R24), BE-021 (security stage, anchor), BE-011 (satisfied(anchor), R24 hold) | DES-001/014/018/019 |
+| `knowledge\agent-team\plan\` (เอกสาร) | ถ้าเป็นรูปเดิม → legacy (dispatch ทีละตัว) จนกว่า PM replan (OQ-15) | DES-001 |
+| งานใหม่ (ยังไม่มีโค้ด) | scheduler, router, planParser, batching, contextLoader, sessionAudit, statusWriter, stateStore v2, web ต่อ task | DES-001/007/018–022 |
+| วิธี build orchestrator เอง (risk #14) | **build แบบ solo mode** (DES-013) — ไม่ใช้ orchestrated run กับ target `code/agent-team` · universal deny `code/agent-team/**` คงเดิม ไม่มีข้อยกเว้น (เจ้าของ jtrp98 2026-10-05) | DES-006, DES-013 |
 
 ## Change Log
 
@@ -72,3 +111,8 @@
 - 2026-10-05 — Rev 8 — packRoot = code\ (pack เป็น asset ของสินค้า) · DES-015 sta-config.json machine-local (n knowledge × n target, เลือก knowledge→target→module) · code = package ติดตั้ง private · onboarding knowledge ด้วย setup prompt (phase 1)
 - 2026-10-05 — Rev 9 — REQ-009 (สวิตช์ git commit, OQ-7/8/9): DES-015 ตัด draft `git: {remote}`/ตรวจ origin → `gituse` (knowledge + target, target ชนะ, default เปิด, freeze `gitPolicy`) · DES-006 audit ใช้ git ตาม repo ไม่ขึ้นกับสวิตช์ + git ต่อ role · DES-009 แสดงสวิตช์ · DES-012 packet `gitPolicy` · ใหม่ DES-016 (การบังคับ) + DES-017 (`/gituse`) · data-model ย่อ (comment หลักฐาน/ประวัติ) · แก้หลักฐาน "ไม่ใช่ git repo" · ข้อความเดิม verbatim → `archive.md` §Superseded 2026-10-05 · risks.md +#13 (gituse default เปิด) +#14 (target = orchestrator home ชน universal deny) · modules.md ผู้เขียน `gituse` · ชื่อ field + settings.json รอเจ้าของยืนยัน (gate 2)
 - 2026-10-05 — Rev 9 ย่อขนาด (driver วัด: data-model 15,599 · des-006 9,009 · des-015 8,332 · des-013 8,194 B เกินงบ) — ย้ายเหตุผล/หลักฐาน/ประวัติ + ย่อหน้า git ต่อ role ที่ซ้ำ DES-016 → `archive.md` §Rev 9 ย่อขนาดรอบ 2 (rule ไม่เปลี่ยน) · แก้หัว budget: 22 ไฟล์
+- 2026-10-05 — Rev 10 — REQ-010…021 (spec refactor session/orchestration ของเจ้าของ jtrp98, OQ-10…19 ปิด): DES-001 → DAG scheduler + เพดานค่าเดียว + session policy + plan legacy · DES-006 ชั้น 3 → ต่อ session (ใหม่ DES-021 path claim — ทางเลือก A/B/C) · DES-007 runtime state ต่อ task + crash restart + Status write-back · DES-008 gate scope + AC-078 · DES-012 packet v2/handoff-v2 (7 output states, blocker = NEEDS_*) · DES-014 plan v2 + task file + pack ที่ setup ต้องแก้ · DES-002/009/013 ปรับ · ใหม่ DES-018 router, DES-019 review/QA/Feature QA, DES-020 context loader, DES-022 dashboard ต่อ task · data-model: `scheduler`/`audit`, TaskRuntime, SessionRecord, GateRecord scope, PacketV2, HandoffV2; tiers/camps ย่อรูป · quality-attributes/modules/risks (+#15–19) · ของเดิม verbatim → `archive.md` §Rev 10 · **gate 2 ค้าง G2-a…e** · คำถาม BA 4 ข้อ · ขนาดไฟล์ยังไม่วัด (SA ไม่มี shell)
+- 2026-10-05 — Rev 10 ปิด gate — เจ้าของ (jtrp98) ตอบ 2026-10-05 ผ่าน AskUserQuestion: G2-b = B path claim · G2-a/c/d/e ยืนยัน · risk #14 = build orchestrator แบบ solo ไม่แก้ deny ไม่มีข้อยกเว้น · คำถาม BA 4 ข้อ = ใช้ default ของ design → ตาราง/คำถาม/คำตอบตรงตัวย้าย `archive.md` §Rev 10 · ตัดป้าย "รอยืนยัน" ใน DES-001/012/021, data-model, risks · ย่อ data-model (16,245 B), des-013 (9,079 B), des-014 (9,314 B) ตามที่ driver วัด — เหตุผล/หลักฐาน/ประวัติ verbatim → `archive.md` §Rev 10 ย่อขนาด (rule/contract ไม่เปลี่ยน)
+- 2026-10-05 — Rev 11 (PM replan + review, เจ้าของ jtrp98): (2) REV-005 severity ชุดเดียว `Critical|Important|Minor` — blocking = Critical|Important (DES-018 §Severity, DES-019, data-model comment) — คง HandoffV2 ที่ยืนยันแล้ว · (3) task id ชน finding/TP → ลำดับ resolve + รูปมีหมวดนำ `qa:` (DES-020) ไม่ renumber · (4) task Owner qa-engineer = anchor ของ `feature-qa` (DES-018 R18/R19, DES-019) — ไม่แตะ schema · (5) ป้าย REQ-009 ไม่อยู่ R1 ที่ DES-006/009/012/013/015/016/017 + ตารางนี้, ค่า `gitPolicy` R1 ปิด (DES-015) — rule ไม่ลบ · (1) 🔒 Security gate → G2-f (gate 2) ตอบโดยเจ้าของ jtrp98 2026-10-05 = A: HandoffV2 `securityGate` + R23 + R19 อ่าน 🔒 จาก plan หรือ `sessions[].handoff` + 🔒 write-back (DES-007) + validate (7) (DES-012) + DES-006/019 · ค่า `gitPolicy` R1 ยืนยัน · ย่อ des-019 (8,521 B) / des-015 (8,265 B) ตามที่ driver วัด · ของเดิม + คำถาม/คำตอบ verbatim → `archive.md` §Rev 11 · ขนาดหลังแก้ยังไม่วัด (SA ไม่มี shell)
+- 2026-10-05 — Rev 12 (OQ-20 ปิดโดยเจ้าของ jtrp98 — AC-079, AC-080): DES-018 +R24 (Owner reviewer/security · anchor > 1 → hold `plan-error` แถว + dependents, เตือนพร้อม task id, task อื่นเดินต่อแบบ R9/AC-039) · R18 ไม่นับ dependents ของ anchor · R19 security = stage ท้าย phase 🔒 · DES-019 §Security stage (🔒 = `## Phases` ∨ `Security-sensitive: yes` ∨ `securityGate`; หลัง Feature QA PASS; gate คง 7) + anchor ≤ 1 ต่อ phase + satisfied(anchor) = phase `cleared` · DES-014 Owner/validator · DES-001 · ไม่แตะ schema (`plan-error` ใช้ enum เดิม) · ของเดิม verbatim → `archive.md` §Rev 12 · ขนาด des-001/014/018/019 ยังไม่วัด (SA ไม่มี shell)
+- 2026-10-05 — Rev 12 ย่อขนาด (driver วัด des-018 8,643 · des-019 9,331 · des-014 9,087 B): ตัดเหตุผล/หลักฐาน/ประวัติ/ข้อความซ้ำ data-model + รวม Change Log → `archive.md` §Rev 12 ย่อขนาด · rule/ตาราง R1–R24/contract ไม่เปลี่ยน · ขนาดหลังตัดยังไม่วัด

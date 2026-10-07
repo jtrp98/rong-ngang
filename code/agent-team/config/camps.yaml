@@ -1,6 +1,6 @@
 # camps.yaml — spawn profile ต่อ camp (คนเป็นเจ้าของ — ระบบอ่านอย่างเดียว)
 # ชื่อ flag มาจาก --help จริงของ CLI แต่ละตัว (ตรวจ 2026-10-04) — DES-002 · ตรงตาม design\data-model.md
-defaults: { timeoutSec: 1800, retryOnCrash: 1 } # int — หมดเวลาต่อ stage; จำนวน retry เมื่อ CLI พังก่อนทำงาน
+defaults: { timeoutSec: 1800, retryOnCrash: 1 } # int — หมดเวลาต่อ stage; retryOnCrash = retry เฉพาะ spawn ไม่สำเร็จ (CLI ไม่เริ่มทำงาน) เท่านั้น — session ที่เริ่มแล้วแล้วพังไม่ retry ที่นี่ (DES-007; restart ใช้ scheduler.crashRestartLimit)
 camps:
   claude:
     command: claude # claude 2.1.287

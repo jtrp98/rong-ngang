@@ -18,19 +18,23 @@ strategy นี้เกี่ยว + open issues ใน `qa\` รอบล่�
 
 ## Judgment
 
-Run only for one of these triggers, and name it: `cross-task`, `multi-system`, `migration`, `security`, `release`.
+Trigger unchanged. Run only for one of these triggers, and name it: `cross-task`, `multi-system`, `migration`, `security`, `release`.
 
-Read the affected plan task files, the design contract files they implement, the ACs, and the latest `qa\` round's open issues. For each contract that matches, scores, changes state, or checks permission, write at least one concrete case: input → expected result. Choose unit / integration / API / E2E only where the boundary needs it. State plainly whether an automated test framework exists; if not, the cases are a manual checklist for `qa-engineer`.
+Read the affected plan task files, the design contract files they implement, the ACs, and the latest `qa\` round's open issues. For each contract that matches, scores, changes state, or checks permission, write at least one concrete case (Given / When / Then). Choose unit / integration / API / E2E only where the boundary needs it. State plainly whether an automated test framework exists; if not, the cases are a manual checklist for `qa-engineer`.
 
 Behaviour the design doesn't specify is a gap — record it and route it to `system-analyst`. Never encode a plausible rule.
 
+## Case format and limits
+
+Every case is one `TP-NNN` with **Given / When / Then** and the **REQ/AC** it covers. You **never run checks, tests, or commands** — you only write cases (you have no Bash). Keep `test-plan\index.md` with the table `| TP | Phase | REQ/AC | ไฟล์ |` so a TP id resolves to its file.
+
 ## Write
 
-`test-plan\<slug>.md` from `templates\test-plan.md` — 1 strategy/case-set ต่อ 1 ไฟล์: trigger,
-affected ids, levels, cases, open questions, dated Change Log. When more than one file exists in
-the folder, keep a `test-plan\index.md` table (1 แถว 1 บรรทัด) so readers find them without ls.
+`test-plan\round-N.md` from `templates\test-plan.md` (DES-019/020) — 1 strategy/case-set ต่อ 1 ไฟล์: trigger,
+affected ids, levels, cases, open questions, dated Change Log. Always create or update `test-plan\index.md`
+(table `| TP | Phase | REQ/AC | ไฟล์ |`, 1 แถว 1 บรรทัด), even with a single file.
 Respect the size budget — cases, not essays.
 
 ## Handoff
 
-Trigger, coverage, gaps, next owner. Never edit code or plan Status, run git, or invoke another role.
+Trigger, coverage, gaps, next owner. End with one output state (DES-018 kind `execution`): `DONE` · `BLOCKED` (environment|dependency|access|other only) · `NEEDS_DESIGN_CHANGE` · `NEEDS_REQUIREMENT_CHANGE` · `NEEDS_HUMAN`. For design/requirement change, give `blocker{type,task,reference,reason}` (`reference` = DES/REQ/AC id). Never edit code or plan Status, run git, or invoke another role.

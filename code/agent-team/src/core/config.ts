@@ -37,7 +37,8 @@ export const DOCS_LAYOUTS = ["split", "flat", "module"] as const;
 export const BRIEF_CHANNELS = ["stdin", "packet-file"] as const;
 export const GATE_TRIGGERS = ["handoff", "structural"] as const;
 // DES-002: ชื่อ flag มีจริงใน help แต่ห้ามใช้เด็ดขาด
-const FORBIDDEN_ARGS = ["--dangerously-skip-permissions", "--dangerously-bypass-approvals-and-sandbox"];
+// + arg ที่ resume session เดิม (--continue/--resume/codex `resume`) — ทุก stage ต้องเป็น session ใหม่ (REQ-013 AC-033)
+const FORBIDDEN_ARGS = ["--dangerously-skip-permissions", "--dangerously-bypass-approvals-and-sandbox", "--continue", "--resume", "resume"];
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "::1", "localhost"]);
 
 export type CampName = (typeof KNOWN_CAMPS)[number];
@@ -105,7 +106,14 @@ export interface RegistryConfig {
   templatesRoot: string; // derived — <packRoot>\templates
   orchestratorHome: string;
   ui: { host: string; port: number; openBrowser: boolean };
-  concurrency: { maxConcurrentRuns: number; maxConcurrentStages: number };
+  scheduler: {
+    maxParallelSessions: number;
+    fixRoundLimit: number;
+    crashRestartLimit: number;
+    reviewWave: { maxTasks: number; maxDiffLines: number };
+    largeTask: { diffLines: number; files: number };
+  };
+  audit: { manifestIgnore: string[]; preimageMaxMB: number };
 }
 export interface StaTarget {
   name: string;
@@ -312,7 +320,10 @@ function expectRequiredKeys(ctx: FileContext, vpath: (string | number)[], v: Rec
 function validateRegistry(ctx: FileContext, v: unknown): void {
   const root = expectMap(ctx, [], v, "registry.yaml root");
   if (!root) return;
-  expectExactKeys(ctx, [], root, ["project", "docsLayout", "packRoot", "orchestratorHome", "ui", "concurrency"]);
+  if (root.concurrency !== undefined) {
+    ctx.add(["concurrency"], "`concurrency` ถูกแทนที่ด้วย `scheduler` + `audit` (breaking — Rev 10) — ลบ block นี้ออก (fail-closed)");
+  }
+  expectExactKeys(ctx, [], root, ["project", "docsLayout", "packRoot", "orchestratorHome", "ui", "scheduler", "audit"]);
   expectString(ctx, ["project"], root.project, "project");
   expectEnum(ctx, ["docsLayout"], root.docsLayout, "docsLayout", DOCS_LAYOUTS);
   expectString(ctx, ["packRoot"], root.packRoot, "packRoot");
@@ -327,11 +338,30 @@ function validateRegistry(ctx: FileContext, v: unknown): void {
     expectInt(ctx, ["ui", "port"], ui.port, "ui.port", 1024, 65535);
     expectBool(ctx, ["ui", "openBrowser"], ui.openBrowser, "ui.openBrowser");
   }
-  const concurrency = expectMap(ctx, ["concurrency"], root.concurrency, "concurrency");
-  if (concurrency) {
-    expectExactKeys(ctx, ["concurrency"], concurrency, ["maxConcurrentRuns", "maxConcurrentStages"]);
-    expectInt(ctx, ["concurrency", "maxConcurrentRuns"], concurrency.maxConcurrentRuns, "maxConcurrentRuns", 1);
-    expectInt(ctx, ["concurrency", "maxConcurrentStages"], concurrency.maxConcurrentStages, "maxConcurrentStages", 1);
+  const sch = expectMap(ctx, ["scheduler"], root.scheduler, "scheduler");
+  if (sch) {
+    expectExactKeys(ctx, ["scheduler"], sch, ["maxParallelSessions", "fixRoundLimit", "crashRestartLimit", "reviewWave", "largeTask"]);
+    expectInt(ctx, ["scheduler", "maxParallelSessions"], sch.maxParallelSessions, "scheduler.maxParallelSessions", 1);
+    expectInt(ctx, ["scheduler", "fixRoundLimit"], sch.fixRoundLimit, "scheduler.fixRoundLimit", 0);
+    expectInt(ctx, ["scheduler", "crashRestartLimit"], sch.crashRestartLimit, "scheduler.crashRestartLimit", 0);
+    const rw = expectMap(ctx, ["scheduler", "reviewWave"], sch.reviewWave, "scheduler.reviewWave");
+    if (rw) {
+      expectExactKeys(ctx, ["scheduler", "reviewWave"], rw, ["maxTasks", "maxDiffLines"]);
+      expectInt(ctx, ["scheduler", "reviewWave", "maxTasks"], rw.maxTasks, "reviewWave.maxTasks", 1);
+      expectInt(ctx, ["scheduler", "reviewWave", "maxDiffLines"], rw.maxDiffLines, "reviewWave.maxDiffLines", 1);
+    }
+    const lt = expectMap(ctx, ["scheduler", "largeTask"], sch.largeTask, "scheduler.largeTask");
+    if (lt) {
+      expectExactKeys(ctx, ["scheduler", "largeTask"], lt, ["diffLines", "files"]);
+      expectInt(ctx, ["scheduler", "largeTask", "diffLines"], lt.diffLines, "largeTask.diffLines", 1);
+      expectInt(ctx, ["scheduler", "largeTask", "files"], lt.files, "largeTask.files", 1);
+    }
+  }
+  const audit = expectMap(ctx, ["audit"], root.audit, "audit");
+  if (audit) {
+    expectExactKeys(ctx, ["audit"], audit, ["manifestIgnore", "preimageMaxMB"]);
+    expectStringArray(ctx, ["audit", "manifestIgnore"], audit.manifestIgnore, "audit.manifestIgnore");
+    expectInt(ctx, ["audit", "preimageMaxMB"], audit.preimageMaxMB, "audit.preimageMaxMB", 0);
   }
 }
 
