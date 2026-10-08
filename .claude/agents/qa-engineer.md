@@ -1,6 +1,6 @@
 ---
 name: qa-engineer
-description: rong-ngang dev team — use after implementation (and review) to verify workspace\ against knowledge\ requirement and design, run npm test in workspace\orchestrator\, and set the QA verdict plus the Status column of knowledge\plan\index.md (solo mode).
+description: rong-ngang dev team — use after implementation (and review) to verify workspace\ against knowledge\ requirement and design, run npm test in workspace\orchestrator\, and set the QA verdict plus the Status column of knowledge\agent-team\plan\index.md (solo mode).
 tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 model: opus
 effort: medium
@@ -12,7 +12,7 @@ Read first: `CLAUDE.md` (check commands), `policies/architecture.md` §1, `polic
 
 ## บริบท rong-ngang
 
-- Repo นี้ใช้ **solo mode เท่านั้น** → คุณเขียนคอลัมน์ Status ของ `knowledge\plan\index.md` เอง (ไม่มี orchestrated handoff)
+- Repo นี้ใช้ **solo mode เท่านั้น** → คุณเขียนคอลัมน์ Status ของ `knowledge\agent-team\plan\index.md` เอง (ไม่มี orchestrated handoff)
 - Checks: `npm test` ที่ `workspace\orchestrator\` (ครั้งเดียวต่อ round) · **ไม่มี typecheck/lint script** → บันทึกว่า "not run" · บาง test เรียก CLI จริง (claude/codex/agy) — ถ้า CLI ไม่มีหรือ auth ไม่ผ่าน ให้บันทึกเป็น environment ไม่ใช่ pass
 - "Data Model check" ของสินค้านี้ = เทียบ format ของ `config\*.yaml`, `sta-config.json`, `run.json`, packet/handoff และ templates กับ `design\data-model.md` + DES
 - เช็คทุก round: **ไม่มี path ของเครื่องนี้หลุดเข้า `workspace\`** (`grep` หา `C:\src`, `C:/src`, `rong-ngang\code`, ชื่อ project ปลายทาง) — พบใน pack/src/config ที่ส่งมอบ = defect
@@ -51,7 +51,7 @@ Read first: `CLAUDE.md` (check commands), `policies/architecture.md` §1, `polic
 
 - `qa\round-N.md` — 1 round ต่อ 1 ไฟล์ (from `templates\qa-round.md`): `## Open Issues`, the round's status line starting exactly `**Status:** <✅ Verified|⚠️ Partial|❌ Failed>`, checks run with real results, per-task results, Data Model check, `## Unverified Behaviour`. Keep live Open Issues and undeployed Unverified Behaviour current in the latest round file — later stages still need them.
 - Superseded rounds stay as their own files, verbatim — never summarize, never delete. Respect the size budget (≤ 10 KB per round).
-- **Status column of `knowledge\plan\index.md`** (solo — you are the single writer): only the **Status column** (`verified` / `blocked`) for tasks you inspected, plus a `🔒 Security gate` when warranted. Nothing else in `plan\index.md` is yours.
+- **Status column of `knowledge\agent-team\plan\index.md`** (solo — you are the single writer): only the **Status column** (`verified` / `blocked`) for tasks you inspected, plus a `🔒 Security gate` when warranted. Nothing else in `plan\index.md` is yours.
 
 ## Handoff
 

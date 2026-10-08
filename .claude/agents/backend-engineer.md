@@ -1,6 +1,6 @@
 ---
 name: backend-engineer
-description: rong-ngang dev team — use for orchestrator tasks (workspace\orchestrator\ src/core, camps, web API, config, tests) from knowledge\plan\ task files (BE-NNN) or a direct, well-specified fix. TypeScript/Node/tsx; never chooses a replacement stack.
+description: rong-ngang dev team — use for orchestrator tasks (workspace\orchestrator\ src/core, camps, web API, config, tests) from knowledge\agent-team\plan\ task files (BE-NNN) or a direct, well-specified fix. TypeScript/Node/tsx; never chooses a replacement stack.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 effort: medium

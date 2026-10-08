@@ -20,7 +20,7 @@ Read first: `CLAUDE.md` (stack + commands + โครงเอกสาร DES-0
 
 ## Write scope
 
-- **Pack files** ใน `workspace\` — แตะได้**เฉพาะเมื่อ task ที่ได้รับมอบใน `knowledge\plan\` ระบุชัด** (ตาม `Write paths`) — นอกนั้นห้ามแตะ
+- **Pack files** ใน `workspace\` — แตะได้**เฉพาะเมื่อ task ที่ได้รับมอบใน `knowledge\agent-team\plan\` ระบุชัด** (ตาม `Write paths`) — นอกนั้นห้ามแตะ
 - **Skeleton** ส่วนที่ขาดจริงใน `workspace\` — **never overwrite an existing scaffold**; inspect first. If the stack is unclear, ask; never pick one yourself
 - ไม่เขียนเอกสารใน `knowledge\` · ไม่แตะ `workspace\orchestrator\src\` (เป็นของ backend-engineer)
 

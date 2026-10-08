@@ -43,7 +43,7 @@ C:\src\schoolbright\
 
 | Key | Value |
 |---|---|
-| Docs root | `C:\src\AICode\rong-ngang\knowledge\` — โครง flat (module เดียว) ตามหัวข้อ "โครงเอกสาร" ด้านล่าง |
+| Docs root | `C:\src\AICode\rong-ngang\knowledge\` — module เดียว: `knowledge\agent-team\` ตามหัวข้อ "โครงเอกสาร" ด้านล่าง |
 | Code roots | `C:\src\AICode\rong-ngang\workspace` — read-only unless a stage is told to write |
 | Stack | Orchestrator: TypeScript, Node ≥ 20, run with tsx. อย่างอื่น: ตรวจโค้ดจริงแล้วค่อยกรอก ห้ามเดา |
 | Check commands | `npm install` · `npm test` · `npm start` / `npm run serve` — รันที่ `workspace\orchestrator\` · **ไม่มี typecheck/lint script** → รายงาน "not run" |
@@ -58,7 +58,7 @@ C:\src\schoolbright\
 เอกสารของ module หนึ่งแตกเป็น**ไฟล์ย่อย + index เป็นสารบัญ** — หน่วยอ่านเล็กที่สุดคือไฟล์จริงหนึ่งไฟล์:
 
 ```
-knowledge\
+knowledge\agent-team\
 ├── index.md            ← สารบัญหลัก (BA เป็น owner) — สารบัญล้วน: ลิงก์ index ย่อย + change log + วิธีอ่าน
 ├── requirement\        ← index.md (ตาราง REQ + status) + scope.md (เนื้อหา module-level) + req-001.md… (1 REQ ต่อไฟล์)
 ├── design\             ← index.md (feasibility + ตาราง DES) + data-model.md + des-001.md… (1 contract ต่อไฟล์) + archive.md
@@ -76,25 +76,25 @@ grep ภายในไฟล์ที่ได้รับอนุญาตท
 
 ## Roles
 
-ขอบเขตเขียนของทุก role มี **สองโซนเท่านั้น** (path แบบ `design\…` `plan\…` ในกติกาและ role prompt = ใต้ `knowledge\`):
+ขอบเขตเขียนของทุก role มี **สองโซนเท่านั้น** (path แบบ `design\…` `plan\…` ในกติกาและ role prompt = ใต้ `knowledge\agent-team\`):
 
 - **โซนเอกสาร = `knowledge\**`** — เขียนโดย role สายเอกสารตามตาราง
 - **โซนงาน = `workspace\**`** — โค้ด pack และ orchestrator เขียนโดย engineer / setup / devops เท่านั้น
 
 | Agent | Owns (writes) | Reads |
 |---|---|---|
-| `business-analyst` | `knowledge\requirement\**`, `knowledge\open-questions\**`, `knowledge\index.md` | user, `requirement\index.md` + req/scope ที่เกี่ยว, qa/design สำหรับ amends |
-| `system-analyst` | `knowledge\design\**` | `requirement\index.md` + `scope.md` + req ที่ brief ชี้, real code/schema ใน `workspace\` |
-| `project-manager` | `knowledge\plan\**`, `knowledge\backlog.md` (ยกเว้นคอลัมน์ Status ของ `plan\index.md` = ผลจาก qa) | design\, requirement |
-| `test-planner` | `knowledge\test-plan\**` (only when triggered) | requirement, design, plan |
-| `uxui-designer` | `knowledge\uxui\UX-*.md` drafts | requirement, design, design sources |
+| `business-analyst` | `knowledge\agent-team\requirement\**`, `knowledge\agent-team\open-questions\**`, `knowledge\agent-team\index.md` | user, `requirement\index.md` + req/scope ที่เกี่ยว, qa/design สำหรับ amends |
+| `system-analyst` | `knowledge\agent-team\design\**` | `requirement\index.md` + `scope.md` + req ที่ brief ชี้, real code/schema ใน `workspace\` |
+| `project-manager` | `knowledge\agent-team\plan\**`, `knowledge\agent-team\backlog.md` (ยกเว้นคอลัมน์ Status ของ `plan\index.md` = ผลจาก qa) | design\, requirement |
+| `test-planner` | `knowledge\agent-team\test-plan\**` (only when triggered) | requirement, design, plan |
+| `uxui-designer` | `knowledge\agent-team\uxui\UX-*.md` drafts | requirement, design, design sources |
 | `setup` | `workspace\**` (skeleton ครั้งเดียว + pack ตาม task เท่านั้น) | design, stack |
 | `backend-engineer` | `workspace\**` | plan task, design\des ที่ task ชี้, requirement\req ที่ task ชี้, review/qa rounds |
 | `frontend-engineer` | `workspace\**` | same + signed UX artifact + real backend contract |
-| `reviewer` | `knowledge\review\**` | requirement, design, plan task, changed code ใน `workspace\` |
-| `qa-engineer` | `knowledge\qa\**` + คอลัมน์ Status ของ `plan\index.md` (solo: เขียนเอง) | everything + real code + check results |
-| `security` | `knowledge\security.md` (ไฟล์เดียว) | requirement, design, real code |
-| `devops` | `knowledge\deploy.md`, infra files ใน `workspace\` | qa, security, plan, design |
+| `reviewer` | `knowledge\agent-team\review\**` | requirement, design, plan task, changed code ใน `workspace\` |
+| `qa-engineer` | `knowledge\agent-team\qa\**` + คอลัมน์ Status ของ `plan\index.md` (solo: เขียนเอง) | everything + real code + check results |
+| `security` | `knowledge\agent-team\security.md` (ไฟล์เดียว) | requirement, design, real code |
+| `devops` | `knowledge\agent-team\deploy.md`, infra files ใน `workspace\` | qa, security, plan, design |
 
 **ห้ามเขียนนอกสองโซน** — โดยเฉพาะไฟล์ของทีมที่ราก (`CLAUDE.md`, `.claude\`, `policies\`, `templates\`): agent **อ่านได้ ห้ามแก้** ทีมนี้ปรับโดยเจ้าของ repo เท่านั้น ·
 `workspace\` ทำเป็น solo mode เสมอ — ไม่มี orchestrated mode ที่ repo นี้ (Status ใน `plan\index.md` เขียนโดย qa-engineer เอง)

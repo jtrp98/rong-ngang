@@ -26,6 +26,8 @@
 | REQ-019 | Blocker: ขอแก้ design / requirement ระหว่างทำ task | confirmed | AC-062, AC-063, AC-064 | `req-019.md` |
 | REQ-020 | Orchestrator เป็นเจ้าของ runtime state | confirmed — restart limit 1 สมมติฐาน | AC-065, AC-066, AC-067, AC-075 | `req-020.md` |
 | REQ-021 | กติกา workflow deterministic + output state + localized retry | confirmed | AC-068, AC-069, AC-070, AC-071, AC-076 | `req-021.md` |
+| REQ-022 | แจกจ่าย rong-ngang เป็น npm package (pack มากับ package อย่างเดียว) | confirmed — R2 · ชื่อ package/registry สมมติฐาน | AC-081, AC-082, AC-083, AC-084 | `req-022.md` |
+| REQ-023 | `rong-ngang-workspace\` เก็บเฉพาะของของ project (ผูก knowledge/target, state/log, override) | confirmed — R2 · default owner สมมติฐาน · ที่เปิด session รอ OQ-21 | AC-085, AC-086, AC-087, AC-088 | `req-023.md` |
 | scope.md | เนื้อหา module-level: Overview · Target Users & Roles · Release Scope · Constraints & Assumptions · Declined / Not Pursuing · References | พร้อม | — | `scope.md` |
 | archive.md | ของที่ย้ายออก verbatim (ประวัติ/เหตุผล/หมายเหตุแก้ข้อกำหนดเดิม) จาก req-011, req-012, req-015, req-020, req-021, scope.md — ไม่อ่านตอน startup | พร้อม | — | `archive.md` |
 
@@ -41,3 +43,4 @@
 - 2026-10-05 — gate 7: เจ้าของ (jtrp98) เลือก "ไป release ถัดไป" ผ่าน AskUserQuestion → REQ-009 (AC-025…032) ไม่อยู่ R1 · status คง confirmed · rule/AC ไม่เปลี่ยน · R1 ใช้กติกา no state-changing git เดิม (scope.md Constraints)
 - 2026-10-05 — ปิด OQ-20: เจ้าของ (jtrp98) เลือกข้อ (ก) ผ่าน AskUserQuestion — plan ห้าม task Owner reviewer/security → amend REQ-011 (+AC-079), REQ-012, REQ-015 (+AC-080), REQ-021 (แถวตาราง) · ย้าย Change Log แรกของ req-021 verbatim → `archive.md` · ขนาดไฟล์หลังแก้ยังไม่ได้วัด
 - 2026-10-05 — คุมงบ รอบ 2 (driver วัด: req-011 4,639 B, req-012 4,190 B, req-015 4,312 B, scope.md 12,883 B): ย้าย Change Log เดิม + ข้อความที่ซ้ำ AC/ประวัติ verbatim → `archive.md` · rule/AC/ค่าที่เจ้าของตอบไม่เปลี่ยน (รวม AC-079/080)
+- 2026-10-08 — เพิ่ม REQ-022 (npm package, AC-081…084) + REQ-023 (`rong-ngang-workspace\`, AC-085…088) จากคำตอบเจ้าของ (jtrp98) 2026-10-08 → R2 (gate 7) · ขอบเขต R1 ใน scope.md ย้าย verbatim → `archive.md`

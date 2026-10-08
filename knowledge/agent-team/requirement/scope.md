@@ -22,15 +22,9 @@
 
 ## Release Scope
 
-> Scope ยืนยันโดยผู้ใช้ 2026-10-04
+**R2 (gate 7 — เจ้าของ jtrp98 2026-10-08, AskUserQuestion "เปิด R2 ด้วยเรื่องนี้"):** REQ-022 (แจกจ่ายเป็น npm package) + REQ-023 (`rong-ngang-workspace\` เก็บเฉพาะของ project) · OQ-21 (ที่เปิด session) ส่ง SA เสนอทางเลือก · route BA → SA → PM · ยังไม่มี project ที่ใช้จริง — ไม่ต้อง migrate · REQ-009 (`gituse`) ยังอยู่ backlog เว้นแต่เจ้าของย้ายเข้า
 
-**อยู่ใน release นี้:** REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008 — solo mode รองรับ 4 agents ตั้งแต่ release นี้: claude, codex, antigravity, zcode (จุดเข้าต่อ agent ออกแบบใน design — DES-013)
-
-**R1 ขยาย (gate 7 — ผู้ใช้ยืนยัน 2026-10-05):** REQ-010…REQ-021 + ส่วนขยายใน REQ-001/003/006/008 — refactor session lifecycle, dependency execution, runtime state, orchestration ตาม spec ของเจ้าของ (jtrp98) 2026-10-05 · route BA → SA → PM (เจ้าของ 2026-10-05) · คงของเดิม: role prompts, artifact structure, split docs, exact-path reading, ownership, human gates, policies
-
-**REQ-009 ไม่อยู่ R1 (gate 7 — เจ้าของ jtrp98 2026-10-05, AskUserQuestion "ไป release ถัดไป"):** สวิตช์ git commit `gituse` + AC-025…032 เลื่อนไป release ถัดไป
-
-**ไม่อยู่ใน release นี้** (ไป `..\backlog.md` เมื่อ PM เปิด module นี้): แจ้ง gate ผ่าน Telegram/LINE/Email, เจ้าของ gate หลายคนพร้อมช่องทางติดต่อจริง (config รองรับแล้ว แต่ไม่กรอกตัวจริง), camp เพิ่มนอกจาก 3 ตัว (เช่น opencode/zai ตามของเดิม), รายงานต้นทุน/โควตาต่อ camp, รันต่างเครื่อง/บน server, self-learning/memory ของ CAO
+**R1 — ปิดแล้ว (DONE / RELEASED 2026-10-07):** REQ-001…008, REQ-010…021 — ขอบเขตเต็ม verbatim ย้ายไป `archive.md` § "scope.md — Release Scope R1 — ย้าย 2026-10-08"
 
 ## Constraints & Assumptions
 
@@ -66,3 +60,4 @@
 ## Change Log
 
 - 2026-10-05 — คุมงบ รอบ 2: Change Log เดิม + หมายเหตุประวัติ (OQ-10…19 ปิด, บันทึก REQ-009 เดิม, หมายเหตุวันที่ระบบ) verbatim → `archive.md` §scope.md (รอบ 2)
+- 2026-10-08 — เปิด R2 (REQ-022, REQ-023, OQ-21) ตามคำตอบเจ้าของ (jtrp98) 2026-10-08 · ย้ายขอบเขต R1 (ปิดแล้ว) verbatim → `archive.md` เพื่อคุมงบ

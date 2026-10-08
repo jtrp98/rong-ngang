@@ -95,3 +95,17 @@ Change Log เดิม:
 
 - 2026-10-05 — ย้ายประวัติ (Change Log 3 บรรทัด + หัวไฟล์เดิม + ท้ายย่อหน้า R1 ขยายที่ซ้ำ Constraints (ง)) verbatim → `archive.md` §scope.md เพื่อคุมงบ 12 KB
 - 2026-10-05 — gate 7 (jtrp98): REQ-009 เลื่อนไป release ถัดไป (Release Scope) + R1 ใช้ no state-changing git เดิม (Constraints)
+
+## scope.md — Release Scope R1 — ย้าย 2026-10-08
+
+ย้ายทั้ง section verbatim เมื่อเปิด R2 (R1 ปิดแล้ว 2026-10-07):
+
+> Scope ยืนยันโดยผู้ใช้ 2026-10-04
+
+**อยู่ใน release นี้:** REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008 — solo mode รองรับ 4 agents ตั้งแต่ release นี้: claude, codex, antigravity, zcode (จุดเข้าต่อ agent ออกแบบใน design — DES-013)
+
+**R1 ขยาย (gate 7 — ผู้ใช้ยืนยัน 2026-10-05):** REQ-010…REQ-021 + ส่วนขยายใน REQ-001/003/006/008 — refactor session lifecycle, dependency execution, runtime state, orchestration ตาม spec ของเจ้าของ (jtrp98) 2026-10-05 · route BA → SA → PM (เจ้าของ 2026-10-05) · คงของเดิม: role prompts, artifact structure, split docs, exact-path reading, ownership, human gates, policies
+
+**REQ-009 ไม่อยู่ R1 (gate 7 — เจ้าของ jtrp98 2026-10-05, AskUserQuestion "ไป release ถัดไป"):** สวิตช์ git commit `gituse` + AC-025…032 เลื่อนไป release ถัดไป
+
+**ไม่อยู่ใน release นี้** (ไป `..\backlog.md` เมื่อ PM เปิด module นี้): แจ้ง gate ผ่าน Telegram/LINE/Email, เจ้าของ gate หลายคนพร้อมช่องทางติดต่อจริง (config รองรับแล้ว แต่ไม่กรอกตัวจริง), camp เพิ่มนอกจาก 3 ตัว (เช่น opencode/zai ตามของเดิม), รายงานต้นทุน/โควตาต่อ camp, รันต่างเครื่อง/บน server, self-learning/memory ของ CAO

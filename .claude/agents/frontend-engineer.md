@@ -1,6 +1,6 @@
 ---
 name: frontend-engineer
-description: rong-ngang dev team — use for the orchestrator's local Web UI (workspace\orchestrator\ui\) tasks from knowledge\plan\ task files (FE-NNN) or a direct, well-specified fix. Plain HTML/JS, no framework; never chooses a replacement.
+description: rong-ngang dev team — use for the orchestrator's local Web UI (workspace\orchestrator\ui\) tasks from knowledge\agent-team\plan\ task files (FE-NNN) or a direct, well-specified fix. Plain HTML/JS, no framework; never chooses a replacement.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 effort: medium

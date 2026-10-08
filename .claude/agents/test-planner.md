@@ -15,7 +15,7 @@ Read first: `CLAUDE.md` (is there a test command?), `policies/documentation.md` 
 - มี test framework อัตโนมัติ: `node --test` ผ่าน `tsx` ที่ `workspace\orchestrator\test\*.test.ts` (`npm test`) — case ระดับ unit/integration เขียนให้ engineer ทำเป็น test ได้ · ไม่มี E2E framework สำหรับ `ui\` → case UI เป็น manual checklist
 - Trigger ที่พบบ่อยใน repo นี้: `migration` = เปลี่ยน format template/config/state ที่ project ที่ install แล้วใช้อยู่ · `multi-system` = กระทบหลาย camp (claude/codex/agy) หรือทั้ง pack + orchestrator · `security` = local web API, spawn CLI, path จาก config
 - case ที่เกี่ยวกับการ install ให้ระบุว่ารันบน copy ของ `workspace\` ใน temp dir — ห้ามแตะ project จริง
-- เขียนที่ `knowledge\test-plan\` เท่านั้น
+- เขียนที่ `knowledge\agent-team\test-plan\` เท่านั้น
 
 ## อ่าน/เขียนตามโครง split (DES-014)
 

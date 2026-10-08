@@ -30,6 +30,7 @@
 | OQ-18 | task ค้างตอน restart + รอบแก้ใช้ session เดิมหรือใหม่ | เจ้าของ (jtrp98) | closed → REQ-012, REQ-020 | `oq-18.md` |
 | OQ-19 | สถานการณ์ที่ spec เน้น เป็น gate ใหม่หรือรวม gate เดิม | เจ้าของ (jtrp98) | closed → REQ-006 | `oq-19.md` |
 | OQ-20 | task Owner = reviewer/security ใน orchestrated mode ทำอย่างไร (DES-018 ไม่มี kind) | เจ้าของ (jtrp98) | closed → REQ-011/012/015/021 | `oq-20.md` |
+| OQ-21 | ผู้ใช้ปลายทางเปิด agent session ที่ไหน (ราก project หรือ `rong-ngang-workspace\`) | SA เสนอ → เจ้าของ (jtrp98) เลือก | open → SA | `oq-21.md` |
 
 ## Change Log
 
@@ -41,3 +42,4 @@
 - 2026-10-05 — ปิด OQ-10…19: เจ้าของ (jtrp98) ตอบผ่าน AskUserQuestion โดยเลือกตัวเลือกตามข้อเสนอของ BA ทุกข้อ (ตามรายงาน handoff ของ BA 2026-10-05) → propagate เข้า REQ-003/006/008/011/012/013/015/017/018/020/021 + scope.md · ตัวเลข config ตั้งต้น (เพดาน 3, restart 1, wave 4/800, task ใหญ่ 400/10) ยังเป็นสมมติฐาน
 - 2026-10-05 — เปิด OQ-20 (task Owner reviewer/security ใน orchestrated mode) รอเจ้าของ (jtrp98) — BA ไม่มี AskUserQuestion ใน session นี้ ส่งคำถามให้ driver ถาม
 - 2026-10-05 — ปิด OQ-20: เจ้าของ (jtrp98) เลือกข้อ (ก) ตามข้อเสนอของ BA ผ่าน AskUserQuestion — ห้าม task Owner reviewer/security → propagate REQ-011 (AC-079), REQ-012, REQ-015 (AC-080), REQ-021
+- 2026-10-08 — เปิด OQ-21 (ที่เปิด agent session ของผู้ใช้ปลายทาง) — เจ้าของ (jtrp98) ตอบ "ยังไม่แน่ใจ" → ส่ง `system-analyst` เสนอทางเลือก

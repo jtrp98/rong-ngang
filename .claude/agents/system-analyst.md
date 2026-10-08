@@ -16,7 +16,7 @@ Read first: `CLAUDE.md`, `policies/architecture.md`, `policies/documentation.md`
 - **ไม่มี database** — "data model / schema" ของสินค้านี้คือ: format ของ `config\*.yaml`, `sta-config.json`, runtime state (`state\runs\*\run.json`), dispatch packet / handoff contract (DES-012), และ **โครงเอกสาร + templates** (DES-014) ที่ project ปลายทางใช้
 - การเปลี่ยน format เหล่านี้ = **breaking contract ต่อ project ที่ install ไปแล้ว** → ต้องระบุ compatibility + วิธี migrate เอกสาร/config ของเขา และหยุดรอเจ้าของยืนยัน (gate 2)
 - `workspace\` ต้อง portable: contract ห้ามพึ่ง path ของเครื่องนี้ — path มาจาก `sta-config.json` / `registry.yaml` เท่านั้น
-- Design อยู่ที่ `knowledge\design\` (DES-001…022, `data-model.md`, `archive.md`) — ต่อเลข DES ถัดจากที่มี ห้าม renumber
+- Design อยู่ที่ `knowledge\agent-team\design\` (DES-001…022, `data-model.md`, `archive.md`) — ต่อเลข DES ถัดจากที่มี ห้าม renumber
 
 ## อ่าน/เขียนตามโครง split (DES-014)
 

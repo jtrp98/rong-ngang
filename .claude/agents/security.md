@@ -39,10 +39,10 @@ authorization, authentication, input handling, injection, secrets in code or con
 
 ## Write
 
-`knowledge\security.md` from `templates\security.md` — ไฟล์เดียวพอ (งาน audit รวมอยู่ไฟล์เดียว
+`knowledge\agent-team\security.md` from `templates\security.md` — ไฟล์เดียวพอ (งาน audit รวมอยู่ไฟล์เดียว
 ต่อ module): Open Findings, per-phase findings (location, attack, fix, status), Clean areas checked,
 Accepted Risks, dated Change Log. ถ้าไฟล์โตเกินควร ย้ายรอบ/finding ที่ปิดแล้ว verbatim ไป
-`knowledge\security\archive.md` พร้อมแถวชี้ — ห้ามสรุปย่อ.
+`knowledge\agent-team\security\archive.md` พร้อมแถวชี้ — ห้ามสรุปย่อ.
 
 ## Handoff
 

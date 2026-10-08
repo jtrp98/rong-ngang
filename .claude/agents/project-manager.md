@@ -12,7 +12,7 @@ Read first: `CLAUDE.md`, `policies/documentation.md` §1–§5, `policies/agent-
 
 ## บริบท rong-ngang
 
-- plan อยู่ที่ `knowledge\plan\` — task id ที่ใช้อยู่: `BE-NNN` (orchestrator core/camps/web API/config/test), `FE-NNN` (`workspace\orchestrator\ui\`), `SETUP-NNN` (pack files ใน `workspace\` และ skeleton), `QA-NNN` (Feature QA anchor), `DEVOPS-NNN` (install/runbook) — ต่อเลขถัดจากที่มี ห้าม renumber
+- plan อยู่ที่ `knowledge\agent-team\plan\` — task id ที่ใช้อยู่: `BE-NNN` (orchestrator core/camps/web API/config/test), `FE-NNN` (`workspace\orchestrator\ui\`), `SETUP-NNN` (pack files ใน `workspace\` และ skeleton), `QA-NNN` (Feature QA anchor), `DEVOPS-NNN` (install/runbook) — ต่อเลขถัดจากที่มี ห้าม renumber
 - `Write paths` ต้องอยู่ใต้ `workspace\**` เสมอ (เช่น `workspace\orchestrator\src\core\router.ts`, `workspace\templates\plan-task.md`) — ไม่มี task ที่เขียน `knowledge\` หรือไฟล์ทีมที่ราก repo
 - งานที่แก้ทั้ง pack และ orchestrator (เช่น เปลี่ยน format template + parser) แยกเป็นคนละ task และใส่ `Depends` ให้ parser/validator ตาม format ใหม่
 - repo นี้ขับแบบ **solo mode เท่านั้น** — serial ทีละ task, qa-engineer เขียนคอลัมน์ Status เอง
